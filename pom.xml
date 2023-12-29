@@ -71,7 +71,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>pshe_patcher.Patcher</mainClass>
+              <mainClass>PatcherMain</mainClass>
             </manifest>
           </archive>
         </configuration>

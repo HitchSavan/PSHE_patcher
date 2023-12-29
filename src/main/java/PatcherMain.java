@@ -1,3 +1,4 @@
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -47,40 +48,58 @@ public class PatcherMain {
             updatePatch = PatchCreator.getPatch(oldByteData, newByteData);
         }
 
-        System.out.println("_____________DIFF UPDATE OUTPUT_____________");
+        StringBuffer stringBuffer = new StringBuffer();
+
+        stringBuffer.append("_____________DIFF UPDATE OUTPUT_____________\n");
         updateResult.forEach(item -> {
-            System.out.print(item.operation);
-            System.out.print(" ");
-            System.out.print(item.operation.ordinal());
-            System.out.print(" ");
-            System.out.println(item.text);
+            stringBuffer.append(item.operation);
+            stringBuffer.append(" ");
+            stringBuffer.append(item.operation.ordinal());
+            stringBuffer.append(" ");
+            stringBuffer.append(item.text);
+            stringBuffer.append("\n");
         });
 
-        System.out.println("_____________PATCHER OUTPUT_____________");
+        stringBuffer.append("_____________PATCHER OUTPUT_____________\n");
         updatePatch.forEach(item -> {
-            System.out.println(item);
+            stringBuffer.append(item);
+            stringBuffer.append("\n");
         });
 
-        System.out.println("_____________PATCH TO TEXT_____________");
+        stringBuffer.append("_____________PATCH TO TEXT_____________\n");
         DiffMatchPatch patcher = new DiffMatchPatch();
-        System.out.println(patcher.patchToText(updatePatch));
+        stringBuffer.append(patcher.patchToText(updatePatch));
+        stringBuffer.append("\n");
 
-        System.out.println("_____________PATCHED FILETEXT_____________");
+        stringBuffer.append("_____________PATCHED FILETEXT_____________\n");
         String patchedText = "";
 
         if (useTxtFormat) {
             patchedText = (String)Patcher.applyPatch(oldData, updatePatch)[0];
-            System.out.println(patchedText);
+            stringBuffer.append(patchedText);
+            stringBuffer.append("\n");
         } else {
             patchedText = (String)Patcher.applyPatch(oldByteData, updatePatch)[0];
-            System.out.print("Encoded text: ");
-            System.out.println(patchedText);
-            System.out.print("Decoded text: ");
-            System.out.println(new String(DataEncoder.decode(patchedText), StandardCharsets.UTF_8));
+            stringBuffer.append("Encoded text: ");
+            stringBuffer.append(patchedText);
+            stringBuffer.append("\n");
+            stringBuffer.append("Decoded text: ");
+            stringBuffer.append(new String(DataEncoder.decode(patchedText), StandardCharsets.UTF_8));
+            stringBuffer.append("\n");
         }
 
-        System.out.println("_____________CHECKSUM_____________");
-        System.out.println(IntegrityChecker.check(patchedText, newCheckSum));
+        stringBuffer.append("_____________CHECKSUM_____________\n");
+        stringBuffer.append(IntegrityChecker.check(patchedText, newCheckSum));
+
+        FileOutputStream outputStream = new FileOutputStream("output\\outinfo.txt");
+        byte[] strToBytes = stringBuffer.toString().getBytes();
+        outputStream.write(strToBytes);
+        outputStream.close();
+
+        stringBuffer.append("\nInput any key to close...\n");
+
+        System.out.println(stringBuffer.toString());
+        System.in.read();
 
         // for byte arrays:
         // _____________DIFF UPDATE OUTPUT_____________
