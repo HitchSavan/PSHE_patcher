@@ -9,6 +9,7 @@
      - 2.2.1. Mod type (added/removed) -- bool
      - 2.2.2. Mod start index (byte pos in file) -- longboi int
      - 2.2.3. Mod end index -- longboi int
+   - 2.3. File checksum -- string/long
 3. Maybe message (commit-alike about version) -- string
 
 ## Patcher info (on local)
