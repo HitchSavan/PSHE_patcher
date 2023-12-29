@@ -1,10 +1,10 @@
-import java.security.MessageDigest;
+package patching;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 public class IntegrityChecker {
-    public boolean check(String toEncode, String givenChecksum) throws NoSuchAlgorithmException {
-        String currentChecksum = encodeChecksum(toEncode);
+
+    public static boolean check(String toEncode, String givenChecksum) throws NoSuchAlgorithmException {
+        String currentChecksum = DataEncoder.encodeChecksum(toEncode);
 
         if (!givenChecksum.equals(currentChecksum)) {
             StringBuffer errMessage = new StringBuffer();
@@ -19,10 +19,7 @@ public class IntegrityChecker {
         return currentChecksum.equals(givenChecksum);
     }
 
-    protected String encodeChecksum(String toEncode) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA3-256");
-        byte[] bytes = digest.digest(toEncode.getBytes());
-        
-        return Base64.getEncoder().encodeToString(bytes);
+    public static boolean check(byte[] toEncode, String givenChecksum) throws NoSuchAlgorithmException {
+        return check(DataEncoder.encode(toEncode), givenChecksum);
     }
 }
