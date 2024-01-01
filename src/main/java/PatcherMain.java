@@ -50,7 +50,13 @@ public class PatcherMain {
 
         StringBuffer stringBuffer = new StringBuffer();
 
-        stringBuffer.append("_____________DIFF UPDATE OUTPUT_____________\n");
+        stringBuffer.append("_____________OLD BINARY TEXT FILE_____________\n");
+        stringBuffer.append(useTxtFormat ? oldData : new String(oldByteData, StandardCharsets.UTF_8));
+
+        stringBuffer.append("\n_____________NEW BINARY TEXT FILE_____________\n");
+        stringBuffer.append(useTxtFormat ? newData : new String(newByteData, StandardCharsets.UTF_8));
+
+        stringBuffer.append("\n_____________DIFF UPDATE OUTPUT_____________\n");
         updateResult.forEach(item -> {
             stringBuffer.append(item.operation);
             stringBuffer.append(" ");
@@ -89,6 +95,7 @@ public class PatcherMain {
         }
 
         stringBuffer.append("_____________CHECKSUM_____________\n");
+        stringBuffer.append(newCheckSum).append("\n");
         stringBuffer.append(IntegrityChecker.check(patchedText, newCheckSum));
 
         FileOutputStream outputStream = new FileOutputStream("output\\outinfo.txt");
@@ -100,135 +107,5 @@ public class PatcherMain {
 
         System.out.println(stringBuffer.toString());
         System.in.read();
-
-        // for byte arrays:
-        // _____________DIFF UPDATE OUTPUT_____________
-        // EQUAL 2 VGhpcyBpcyB0ZXN0IGZpbGUsDQp0aGUgb
-        // DELETE 0 2xk
-        // INSERT 1 mV3
-        // EQUAL 2 IG9uZS4NC
-        // INSERT 1 tGC0L7Rh9C60LANC
-        // EQUAL 2 lRoaXMgbGluZSB
-        // DELETE 0 vZi
-        // INSERT 1 pcy
-        // EQUAL 2 B0
-        // DELETE 0 ZXh0IHdpb
-        // INSERT 1 a
-        // EQUAL 2 G
-        // DELETE 0 wgYm
-        // EQUAL 2 Ugc
-        // DELETE 0 mV
-        // INSERT 1 2F
-        // EQUAL 2 t
-        // DELETE 0 b3
-        // EQUAL 2 Z
-        // INSERT 1 S4NC
-        // EQUAL 2 l
-        // DELETE 0 ZA0K0YLQvtGH0LrQsA0KVGhpcyBs
-        // INSERT 1 RoaXMg
-        // EQUAL 2 a
-        // INSERT 1 XMgY
-        // EQUAL 2 W
-        // DELETE 0 5lI
-        // INSERT 1 RkaXRpb24gb
-        // EQUAL 2 Gl
-        // DELETE 0 zIHRo
-        // INSERT 1 u
-        // EQUAL 2 ZS
-        // DELETE 0 BzYW1l
-        // INSERT 1 wgd293
-        // EQUAL 2 Lg==
-        // _____________PATCHER OUTPUT_____________
-        // @@ -30,11 +30,11 @@
-        // GUgb
-        // -2xk
-        // +mV3
-        // IG9u
-
-        // @@ -38,16 +38,32 @@
-        // G9uZS4NC
-        // +tGC0L7Rh9C60LANC
-        // lRoaXMgb
-
-        // @@ -72,85 +72,61 @@
-        // uZSB
-        // -vZi
-        // +pcy
-        // B0
-        // -ZXh0IHdpb
-        // +a
-        // G
-        // -wgYm
-        // Ugc
-        // -mV
-        // +2F
-        // t
-        // -b3
-        // Z
-        // +S4NC
-        // l
-        // -ZA0K0YLQvtGH0LrQsA0KVGhpcyBs
-        // +RoaXMg
-        // a
-        // +XMgY
-        // W
-        // -5lI
-        // +RkaXRpb24gb
-        // Gl
-        // -zIHRo
-        // +u
-        // ZS
-        // -BzYW1l
-        // +wgd293
-        // Lg==
-        // _____________PATCH TO TEXT_____________
-        // @@ -30,11 +30,11 @@
-        // GUgb
-        // -2xk
-        // +mV3
-        // IG9u
-        // @@ -38,16 +38,32 @@
-        // G9uZS4NC
-        // +tGC0L7Rh9C60LANC
-        // lRoaXMgb
-        // @@ -72,85 +72,61 @@
-        // uZSB
-        // -vZi
-        // +pcy
-        // B0
-        // -ZXh0IHdpb
-        // +a
-        // G
-        // -wgYm
-        // Ugc
-        // -mV
-        // +2F
-        // t
-        // -b3
-        // Z
-        // +S4NC
-        // l
-        // -ZA0K0YLQvtGH0LrQsA0KVGhpcyBs
-        // +RoaXMg
-        // a
-        // +XMgY
-        // W
-        // -5lI
-        // +RkaXRpb24gb
-        // Gl
-        // -zIHRo
-        // +u
-        // ZS
-        // -BzYW1l
-        // +wgd293
-        // Lg==
-
-        // _____________PATCHED FILETEXT_____________
-        // Encoded text: VGhpcyBpcyB0ZXN0IGZpbGUsDQp0aGUgbmV3IG9uZS4NCtGC0L7Rh9C60LANClRoaXMgbGluZSBpcyB0aGUgc2FtZS4NClRoaXMgaXMgYWRkaXRpb24gbGluZSwgd293Lg==
-        // Decoded text: This is test file,
-        // the new one.
-        // точка
-        // This line is the same.
-        // This is addition line, wow.
     }
 }

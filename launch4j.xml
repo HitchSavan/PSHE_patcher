@@ -8,14 +8,14 @@
   <cmdLine></cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
-  <downloadUrl></downloadUrl>
+  <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
-  <stayAlive>false</stayAlive>
+  <stayAlive>true</stayAlive>
   <restartOnCrash>true</restartOnCrash>
   <manifest></manifest>
   <icon></icon>
   <jre>
-    <path>%JAVA_HOME%;%PATH%</path>
+    <path>jdk-18.0.2</path>
     <requiresJdk>false</requiresJdk>
     <requires64Bit>false</requires64Bit>
     <minVersion></minVersion>
