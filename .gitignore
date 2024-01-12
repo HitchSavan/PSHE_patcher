@@ -51,6 +51,7 @@
 *.jar
 *.war
 *.ear
+*.zip
 
 # Maven
 log/
@@ -65,4 +66,7 @@ bin/
 build/
 /bin1/
 java/build/**
+
+# JRE
 jdk*
+jre*
