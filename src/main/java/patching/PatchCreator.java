@@ -13,7 +13,7 @@ public class PatchCreator {
     }
 
     public static LinkedList<DiffMatchPatch.Diff> getDiff(byte[] oldData, byte[] newData) {
-        return getDiff(DataEncoder.encode(oldData), DataEncoder.encode(oldData));
+        return getDiff(DataEncoder.encode(oldData), DataEncoder.encode(newData));
     }
     
     public static LinkedList<DiffMatchPatch.Patch> getPatch(String oldData, String newData) {

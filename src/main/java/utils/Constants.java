@@ -1,8 +1,8 @@
 package utils;
 
-public class Constants {
+public enum Constants {
     // diff constants
-    static short DELETE = -1;
-    static short EQUAL = 0;
-    static short INSERT = 1;
+    DELETE,
+    INSERT,
+    EQUAL
 }
