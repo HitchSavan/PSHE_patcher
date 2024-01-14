@@ -26,16 +26,24 @@ public class PatcherMain {
         }
         boolean useTxtFormat = false;
 
-        byte[] oldByteData;
-        byte[] newByteData;
+        byte[] oldByteData = new byte[0];
+        byte[] newByteData = new byte[0];
 
-        if (args.length == 2) {
-            oldByteData = Files.readAllBytes(Paths.get(args[0]));
-            newByteData = Files.readAllBytes(Paths.get(args[1]));
-        } else {
-            oldByteData = PatcherMain.class.getResourceAsStream("/test_old.txt").readAllBytes();
-            newByteData = PatcherMain.class.getResourceAsStream("/test_new.txt").readAllBytes();
+        switch (args.length) {
+            case 0:
+                System.out.println("You can pass paths to old and new files through args");
+                oldByteData = PatcherMain.class.getResourceAsStream("/test_old.txt").readAllBytes();
+                newByteData = PatcherMain.class.getResourceAsStream("/test_new.txt").readAllBytes();
+                break;
+            case 2:
+                oldByteData = Files.readAllBytes(Paths.get(args[0]));
+                newByteData = Files.readAllBytes(Paths.get(args[1]));
+                break;
+            default:
+                System.out.println("Pass paths to old and new files through args");
+                System.exit(1);
         }
+
         String oldData = "";
         String newData = "";
         String newCheckSum = "";
