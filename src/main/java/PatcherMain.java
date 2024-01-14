@@ -10,6 +10,7 @@ import java.util.LinkedList;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import patching.DataEncoder;
 import patching.IntegrityChecker;
@@ -142,9 +143,19 @@ public class PatcherMain {
         outputStream.write(strToBytes);
         outputStream.close();
 
-        stringBuffer.append("\nPress enter to close...");
-
         System.out.println(stringBuffer.toString());
+        System.out.println("\nPress enter to close...");
+
+        JSONObject patchFile = new JSONObject();
+        if (args.length > 0) {
+            patchFile.put("filename", args[0]);
+        } else {
+            patchFile.put("filename", "test_old.txt");
+        }
+        FileOutputStream jsonOutputStream = new FileOutputStream("output\\patch.json");
+        jsonOutputStream.write(patchFile.put("patch", filePatch).toString(4).getBytes());
+        jsonOutputStream.close();
+
         System.in.read();
     }
 }
