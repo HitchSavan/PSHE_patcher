@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
@@ -20,18 +19,23 @@ import patching.Patcher;
 public class PatcherMain {
 
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-        Path path = Paths.get("output");
-
         try {
-            Files.createDirectories(path);
+            Files.createDirectories(Paths.get("output"));
         } catch (IOException e) {
             System.err.println("Cannot create directories - " + e);
         }
-
         boolean useTxtFormat = false;
 
-        byte[] oldByteData = PatcherMain.class.getResourceAsStream("/test_old.txt").readAllBytes();
-        byte[] newByteData = PatcherMain.class.getResourceAsStream("/test_new.txt").readAllBytes();
+        byte[] oldByteData;
+        byte[] newByteData;
+
+        if (args.length == 2) {
+            oldByteData = Files.readAllBytes(Paths.get(args[0]));
+            newByteData = Files.readAllBytes(Paths.get(args[1]));
+        } else {
+            oldByteData = PatcherMain.class.getResourceAsStream("/test_old.txt").readAllBytes();
+            newByteData = PatcherMain.class.getResourceAsStream("/test_new.txt").readAllBytes();
+        }
         String oldData = "";
         String newData = "";
         String newCheckSum = "";

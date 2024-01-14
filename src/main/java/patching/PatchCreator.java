@@ -1,6 +1,7 @@
 package patching;
 
 import java.util.LinkedList;
+import java.util.regex.PatternSyntaxException;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Diff;
@@ -32,9 +33,9 @@ public class PatchCreator {
         String oldData = new String(_oldData);
         LinkedList<DiffMatchPatch.Diff> updateResult = getDiff(oldData, _newData);
 
-        System.out.println(updateResult);
-
         JSONArray filePatch = new JSONArray();
+
+        System.out.println(oldData);
 
         int i = 0;
         int curMod = 0;
@@ -53,7 +54,13 @@ public class PatchCreator {
 
             switch (item.operation.ordinal()) {
                 case 0: // DELETE
-                    oldData = oldData.substring(0, i) + oldData.substring(i).replaceFirst(item.text, "");
+                    System.out.println(oldData.substring(0, i));
+                    try {
+                        oldData = oldData.substring(0, i) + oldData.substring(i).replaceFirst(item.text, "");
+                    } catch (PatternSyntaxException e) {
+                        item.text = "\\"+item.text;
+                        oldData = oldData.substring(0, i) + oldData.substring(i).replaceFirst(item.text, "");
+                    }
                     oneChangePatch.put("mode", false); // mode is INSERT (true) or DELETE (false)
                     break;
 
