@@ -19,6 +19,14 @@ import patching.Patcher;
 
 public class PatcherMain {
 
+    private static int getByteSize(Object object) throws IOException {
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        ObjectOutputStream oos=new ObjectOutputStream(baos);
+        oos.writeObject(object);
+        oos.close();
+        return baos.size();
+    }
+
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
         try {
             Files.createDirectories(Paths.get("output"));
@@ -127,16 +135,14 @@ public class PatcherMain {
         stringBuffer.append("\n_____________CUSTOM PATCHED STR_____________\n");
         stringBuffer.append(Patcher.applyCustomPatch(oldData, filePatch));
 
-        stringBuffer.append("\n_____________PATCH SYMBOLS SIZE COMPARISON_____________\n");
-        stringBuffer.append("Old: ").append(patchText.length());
-        stringBuffer.append("\nNew: ").append(filePatch.toString().length());
-
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        ObjectOutputStream oos=new ObjectOutputStream(baos);
-        oos.writeObject(filePatch.toList());
-        oos.close();
+        stringBuffer.append("\n_____________OLD FILE BYTES SIZE_____________\n");
+        stringBuffer.append(getByteSize(oldData));
+        stringBuffer.append("\n_____________NEW FILE BYTES SIZE_____________\n");
+        stringBuffer.append(getByteSize(newData));
+        stringBuffer.append("\n_____________OLD PATCH BYTES SIZE_____________\n");
+        stringBuffer.append(getByteSize(patchText));
         stringBuffer.append("\n_____________NEW PATCH BYTES SIZE_____________\n");
-        stringBuffer.append(baos.size());
+        stringBuffer.append(getByteSize(filePatch.toList()));
 
         FileOutputStream outputStream = new FileOutputStream("output\\outinfo.txt");
         byte[] strToBytes = stringBuffer.toString().getBytes();

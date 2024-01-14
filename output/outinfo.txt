@@ -146,8 +146,11 @@ _____________CUSTOM PATCH JSON_____________
 [{"mode":false,"data":"2xk","position":33,"id":0},{"mode":true,"data":"mV3","position":33,"id":1},{"mode":true,"data":"tGC0L7Rh9C60LANC","position":45,"id":2},{"mode":false,"data":"vZi","position":75,"id":3},{"mode":true,"data":"pcy","position":75,"id":4},{"mode":false,"data":"ZXh0IHdpb","position":80,"id":5},{"mode":true,"data":"a","position":80,"id":6},{"mode":false,"data":"wgYm","position":82,"id":7},{"mode":false,"data":"mV","position":85,"id":8},{"mode":true,"data":"2F","position":85,"id":9},{"mode":false,"data":"b3","position":88,"id":10},{"mode":true,"data":"S4NC","position":89,"id":11},{"mode":false,"data":"ZA0K0YLQvtGH0LrQsA0KVGhpcyBs","position":94,"id":12},{"mode":true,"data":"RoaXMg","position":94,"id":13},{"mode":true,"data":"XMgY","position":101,"id":14},{"mode":false,"data":"5lI","position":106,"id":15},{"mode":true,"data":"RkaXRpb24gb","position":106,"id":16},{"mode":false,"data":"zIHRo","position":119,"id":17},{"mode":true,"data":"u","position":119,"id":18},{"mode":false,"data":"BzYW1l","position":122,"id":19},{"mode":true,"data":"wgd293","position":122,"id":20}]
 _____________CUSTOM PATCHED STR_____________
 VGhpcyBpcyB0ZXN0IGZpbGUsDQp0aGUgbmV3IG9uZS4NCtGC0L7Rh9C60LANClRoaXMgbGluZSBpcyB0aGUgc2FtZS4NClRoaXMgaXMgYWRkaXRpb24gbGluZSwgd293Lg==
-_____________PATCH SYMBOLS SIZE COMPARISON_____________
-Old: 303
-New: 1096
+_____________OLD FILE BYTES SIZE_____________
+147
+_____________NEW FILE BYTES SIZE_____________
+139
+_____________OLD PATCH BYTES SIZE_____________
+310
 _____________NEW PATCH BYTES SIZE_____________
 1843
