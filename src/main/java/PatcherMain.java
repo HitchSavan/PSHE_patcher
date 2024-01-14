@@ -7,11 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
-import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Diff;
+import org.json.JSONArray;
 
 import patching.DataEncoder;
 import patching.IntegrityChecker;
@@ -105,60 +104,25 @@ public class PatcherMain {
 
         if (!useTxtFormat) {
             oldData = DataEncoder.encode(oldByteData);
+            newData = DataEncoder.encode(newByteData);
         }
 
-        // id, position, mod type, substr
-        HashMap<Integer, HashMap<Integer, HashMap<Boolean, String>>> patchMap = new HashMap<>();
+        JSONArray filePatch = PatchCreator.getCustomPatch(oldData, newData);
 
-        int i = 0;
-        int curMod = 0;
-        Diff item;
-        // try to reduce patch size
-        for (int curDiff = 0; curDiff < updateResult.size(); curDiff++) {
-            item = updateResult.get(curDiff);
+        stringBuffer.append("\n_____________CUSTOM PATCH JSON_____________\n");
+        stringBuffer.append(filePatch);
+        stringBuffer.append("\n_____________CUSTOM PATCHED STR_____________\n");
+        stringBuffer.append(Patcher.applyCustomPatch(oldData, filePatch));
 
-            switch (item.operation.ordinal()) {
-                case 2: // EQUAL
-                    i += item.text.length();
-                    break;
-                    
-                case 0: // DELETE
-                    oldData = oldData.substring(0, i) + oldData.substring(i).replaceFirst(item.text, "");
-                    patchMap.put(curMod, new HashMap<>());
-                    patchMap.get(curMod).put(i, new HashMap<>());
-                    patchMap.get(curMod).get(i).put(false, item.text);
-                    curMod += 1;
-                    break;
-
-                case 1: // INSERT
-                    oldData = oldData.substring(0, i) + item.text + oldData.substring(i);
-                    i += item.text.length();
-                    patchMap.put(curMod, new HashMap<>());
-                    patchMap.get(curMod).put(i, new HashMap<>());
-                    patchMap.get(curMod).get(i).put(true, item.text);
-                    curMod += 1;
-                    break;
-            
-                default:
-                    break;
-            }
-
-        }
-
-        stringBuffer.append("\n_____________PATCH_MAP_____________\n");
-        stringBuffer.append(patchMap.toString());
-        stringBuffer.append("\n_____________HAND-PATCHED_STR_____________\n");
-        stringBuffer.append(oldData);
-
-        stringBuffer.append("\n_____________PATCH_SYMBOLS_SIZE_COMPARISON_____________\n");
+        stringBuffer.append("\n_____________PATCH SYMBOLS SIZE COMPARISON_____________\n");
         stringBuffer.append("Old: ").append(patchText.length());
-        stringBuffer.append("\nNew: ").append(patchMap.toString().length());
+        stringBuffer.append("\nNew: ").append(filePatch.toString().length());
 
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
         ObjectOutputStream oos=new ObjectOutputStream(baos);
-        oos.writeObject(patchMap);
+        oos.writeObject(filePatch.toList());
         oos.close();
-        stringBuffer.append("\n_____________NEW_PATCH_BYTES_SIZE_____________\n");
+        stringBuffer.append("\n_____________NEW PATCH BYTES SIZE_____________\n");
         stringBuffer.append(baos.size());
 
         FileOutputStream outputStream = new FileOutputStream("output\\outinfo.txt");
@@ -166,7 +130,7 @@ public class PatcherMain {
         outputStream.write(strToBytes);
         outputStream.close();
 
-        stringBuffer.append("\nInput any key to close...\n");
+        stringBuffer.append("\nPress enter to close...");
 
         System.out.println(stringBuffer.toString());
         System.in.read();
