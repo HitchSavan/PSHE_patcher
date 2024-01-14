@@ -32,10 +32,7 @@ public class PatchCreator {
     public static JSONArray getCustomPatch(String _oldData, String _newData) {
         String oldData = new String(_oldData);
         LinkedList<DiffMatchPatch.Diff> updateResult = getDiff(oldData, _newData);
-
         JSONArray filePatch = new JSONArray();
-
-        System.out.println(oldData);
 
         int i = 0;
         int curMod = 0;
@@ -54,7 +51,6 @@ public class PatchCreator {
 
             switch (item.operation.ordinal()) {
                 case 0: // DELETE
-                    System.out.println(oldData.substring(0, i));
                     try {
                         oldData = oldData.substring(0, i) + oldData.substring(i).replaceFirst(item.text, "");
                     } catch (PatternSyntaxException e) {
