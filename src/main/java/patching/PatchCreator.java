@@ -80,4 +80,37 @@ public class PatchCreator {
     public static JSONArray getCustomPatch(byte[] oldData, byte[] newData) {
         return getCustomPatch(DataEncoder.encode(oldData), DataEncoder.encode(newData));
     }
+
+    public static JSONObject compressJson(JSONObject _obj) {
+        JSONObject compressedJson = new JSONObject().put("f", _obj.getString("filename"))
+                .put("p", new JSONArray());
+        JSONArray patchArray = _obj.getJSONArray("patch");
+        JSONObject patchItem;
+        for (int i = 0; i < patchArray.length(); ++i) {
+            patchItem = patchArray.getJSONObject(i);
+            JSONArray littlePatchItem = new JSONArray()
+                    .put(patchItem.getLong("id"))
+                    .put(patchItem.getLong("position"))
+                    .put(patchItem.getBoolean("mode"))
+                    .put(patchItem.getString("data"));
+            compressedJson.getJSONArray("p").put(littlePatchItem);
+        }
+        return compressedJson;
+    }
+    public static JSONObject decompressJson(JSONObject _obj) {
+        JSONObject decompressedJson = new JSONObject().put("filename", _obj.getString("f"))
+                .put("patch", new JSONArray());
+        JSONArray patchArray = _obj.getJSONArray("p");
+        JSONArray patchItem;
+        for (int i = 0; i < patchArray.length(); ++i) {
+            patchItem = patchArray.getJSONArray(i);
+            JSONObject littlePatchItem = new JSONObject()
+                    .put("id", patchItem.getLong(0))
+                    .put("position", patchItem.getLong(1))
+                    .put("mode", patchItem.getBoolean(2))
+                    .put("data", patchItem.getString(3));
+            decompressedJson.getJSONArray("patch").put(littlePatchItem);
+        }
+        return decompressedJson;
+    }
 }

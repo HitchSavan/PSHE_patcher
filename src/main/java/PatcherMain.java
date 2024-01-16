@@ -155,14 +155,21 @@ public class PatcherMain {
         System.out.println(stringBuffer.toString());
         System.out.println("\nPress enter to close...");
 
-        JSONObject patchFile = new JSONObject();
+        JSONObject patchFile = new JSONObject().put("patch", filePatch);
         if (args.length > 0) {
             patchFile.put("filename", args[0]);
         } else {
             patchFile.put("filename", "test_old.txt");
         }
-        FileOutputStream jsonOutputStream = new FileOutputStream("output\\patch.json");
-        jsonOutputStream.write(patchFile.put("patch", filePatch).toString(4).getBytes());
+
+        JSONObject compressedJson = PatchCreator.compressJson(patchFile);
+
+        FileOutputStream jsonOutputStream = new FileOutputStream("output\\lil_patch.json");
+        jsonOutputStream.write(compressedJson.toString().getBytes());
+        jsonOutputStream.close();
+
+        jsonOutputStream = new FileOutputStream("output\\patch.json");
+        jsonOutputStream.write(PatchCreator.decompressJson(compressedJson).toString(4).getBytes());
         jsonOutputStream.close();
 
         System.in.read();

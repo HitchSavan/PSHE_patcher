@@ -3,128 +3,128 @@
         {
             "mode": false,
             "data": "2xk",
-            "position": 33,
-            "id": 0
+            "id": 0,
+            "position": 33
         },
         {
             "mode": true,
             "data": "mV3",
-            "position": 33,
-            "id": 1
+            "id": 1,
+            "position": 33
         },
         {
             "mode": true,
             "data": "tGC0L7Rh9C60LANC",
-            "position": 45,
-            "id": 2
+            "id": 2,
+            "position": 45
         },
         {
             "mode": false,
             "data": "vZi",
-            "position": 75,
-            "id": 3
+            "id": 3,
+            "position": 75
         },
         {
             "mode": true,
             "data": "pcy",
-            "position": 75,
-            "id": 4
+            "id": 4,
+            "position": 75
         },
         {
             "mode": false,
             "data": "ZXh0IHdpb",
-            "position": 80,
-            "id": 5
+            "id": 5,
+            "position": 80
         },
         {
             "mode": true,
             "data": "a",
-            "position": 80,
-            "id": 6
+            "id": 6,
+            "position": 80
         },
         {
             "mode": false,
             "data": "wgYm",
-            "position": 82,
-            "id": 7
+            "id": 7,
+            "position": 82
         },
         {
             "mode": false,
             "data": "mV",
-            "position": 85,
-            "id": 8
+            "id": 8,
+            "position": 85
         },
         {
             "mode": true,
             "data": "2F",
-            "position": 85,
-            "id": 9
+            "id": 9,
+            "position": 85
         },
         {
             "mode": false,
             "data": "b3",
-            "position": 88,
-            "id": 10
+            "id": 10,
+            "position": 88
         },
         {
             "mode": true,
             "data": "S4NC",
-            "position": 89,
-            "id": 11
+            "id": 11,
+            "position": 89
         },
         {
             "mode": false,
             "data": "ZA0K0YLQvtGH0LrQsA0KVGhpcyBs",
-            "position": 94,
-            "id": 12
+            "id": 12,
+            "position": 94
         },
         {
             "mode": true,
             "data": "RoaXMg",
-            "position": 94,
-            "id": 13
+            "id": 13,
+            "position": 94
         },
         {
             "mode": true,
             "data": "XMgY",
-            "position": 101,
-            "id": 14
+            "id": 14,
+            "position": 101
         },
         {
             "mode": false,
             "data": "5lI",
-            "position": 106,
-            "id": 15
+            "id": 15,
+            "position": 106
         },
         {
             "mode": true,
             "data": "RkaXRpb24gb",
-            "position": 106,
-            "id": 16
+            "id": 16,
+            "position": 106
         },
         {
             "mode": false,
             "data": "zIHRo",
-            "position": 119,
-            "id": 17
+            "id": 17,
+            "position": 119
         },
         {
             "mode": true,
             "data": "u",
-            "position": 119,
-            "id": 18
+            "id": 18,
+            "position": 119
         },
         {
             "mode": false,
             "data": "BzYW1l",
-            "position": 122,
-            "id": 19
+            "id": 19,
+            "position": 122
         },
         {
             "mode": true,
             "data": "wgd293",
-            "position": 122,
-            "id": 20
+            "id": 20,
+            "position": 122
         }
     ],
     "filename": "test_old.txt"
