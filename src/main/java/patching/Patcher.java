@@ -37,4 +37,25 @@ public class Patcher {
     public static String applyCustomPatch(byte[] oldData, JSONArray patch) {
         return applyCustomPatch(DataEncoder.encode(oldData), patch);
     }
+
+    public static String revertCustomPatch(String _newData, JSONArray patch) {
+        String oldData = new String(_newData);
+
+        for (int i = patch.length()-1; i >= 0; --i) {
+            JSONObject item = patch.getJSONObject(i);
+
+            if (item.getBoolean("mode")) { // if mode is INSERT
+                oldData = oldData.substring(0, item.getInt("position")) +
+                        oldData.substring(item.getInt("position")).replaceFirst(item.getString("data"), "");
+            } else {
+                oldData = oldData.substring(0, item.getInt("position")) +
+                        item.getString("data") + oldData.substring(item.getInt("position"));
+            }
+        }
+
+        return oldData;
+    }
+    public static String revertCustomPatch(byte[] oldData, JSONArray patch) {
+        return revertCustomPatch(DataEncoder.encode(oldData), patch);
+    }
 }

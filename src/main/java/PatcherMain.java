@@ -133,7 +133,10 @@ public class PatcherMain {
         stringBuffer.append("\n_____________CUSTOM PATCH JSON_____________\n");
         stringBuffer.append(filePatch);
         stringBuffer.append("\n_____________CUSTOM PATCHED STR_____________\n");
-        stringBuffer.append(Patcher.applyCustomPatch(oldData, filePatch));
+        String customPatchedText = Patcher.applyCustomPatch(oldData, filePatch);
+        stringBuffer.append(customPatchedText);
+        stringBuffer.append("\n_____________REVERSE CUSTOM PATCHED STR_____________\n");
+        stringBuffer.append(Patcher.revertCustomPatch(customPatchedText, filePatch));
 
         stringBuffer.append("\n_____________OLD FILE BYTES SIZE_____________\n");
         stringBuffer.append(getByteSize(oldData));
