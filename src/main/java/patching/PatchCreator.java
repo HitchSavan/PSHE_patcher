@@ -5,10 +5,9 @@ import java.util.regex.PatternSyntaxException;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Diff;
+import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Operation;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import utils.Constants;
 
 public class PatchCreator {
 
@@ -41,7 +40,7 @@ public class PatchCreator {
         for (int curDiff = 0; curDiff < updateResult.size(); curDiff++) {
 
             item = updateResult.get(curDiff);
-            if (item.operation.ordinal() == Constants.EQUAL.ordinal()) {
+            if (item.operation == Operation.EQUAL) {
                 i += item.text.length();
                 continue;
             }
@@ -49,8 +48,8 @@ public class PatchCreator {
             JSONObject oneChangePatch = new JSONObject();
             oneChangePatch.put("position", i); // start position
 
-            switch (item.operation.ordinal()) {
-                case 0: // DELETE
+            switch (item.operation) {
+                case DELETE:
                     try {
                         oldData = oldData.substring(0, i) + oldData.substring(i).replaceFirst(item.text, "");
                     } catch (PatternSyntaxException e) {
@@ -60,7 +59,7 @@ public class PatchCreator {
                     oneChangePatch.put("mode", false); // mode is INSERT (true) or DELETE (false)
                     break;
 
-                case 1: // INSERT
+                case INSERT:
                     oldData = oldData.substring(0, i) + item.text + oldData.substring(i);
                     i += item.text.length();
                     oneChangePatch.put("mode", true); // mode is INSERT (true) or DELETE (false)
