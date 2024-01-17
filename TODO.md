@@ -11,6 +11,7 @@
      - 2.2.3. [&check;] Mod substring of bytes -- string/bytearray
    - 2.3. [&check;] File checksum -- string/long
 3. [ ] Maybe message (commit-alike about version) -- string
+4. [ ] Patch ordered id -- long
 
 ## Patcher info (on local)
 
