@@ -13,11 +13,7 @@
 3. [ ] Maybe message (commit-alike about version) -- string
 4. [ ] Patch ordered id -- long
 
-## Patcher info (on local)
-
-1. [ ] Current patch id (index in DB array)
-
-## Three steps test patch (all base variants)
+## Three variants patch (all base variants)
 
 1. [ ] File created: (empty) -> (test_old.txt)
 2. [x] File updated: (test_old.txt) -> (test_new.txt)
