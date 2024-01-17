@@ -1,5 +1,6 @@
 package patching;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.regex.PatternSyntaxException;
 
@@ -10,6 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class PatchCreator {
+
+    public static boolean compareFiles(String oldData, String newData) throws NoSuchAlgorithmException {
+        return DataEncoder.encodeChecksum(oldData).equals(DataEncoder.encodeChecksum(newData));
+    }
 
     public static LinkedList<DiffMatchPatch.Diff> getDiff(String oldData, String newData) {
         DiffMatchPatch dmp = new DiffMatchPatch();
