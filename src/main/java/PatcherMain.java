@@ -152,7 +152,6 @@ public class PatcherMain {
         outputStream.write(strToBytes);
         outputStream.close();
 
-        System.out.println(stringBuffer.toString());
         System.out.println("\nPress enter to close...");
 
         JSONObject patchFile = new JSONObject().put("patch", filePatch);

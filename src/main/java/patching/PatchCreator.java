@@ -2,7 +2,6 @@ package patching;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
-import java.util.regex.PatternSyntaxException;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Diff;
@@ -18,6 +17,7 @@ public class PatchCreator {
 
     public static LinkedList<DiffMatchPatch.Diff> getDiff(String oldData, String newData) {
         DiffMatchPatch dmp = new DiffMatchPatch();
+        dmp.diffTimeout = 0;
         LinkedList<DiffMatchPatch.Diff> diff = dmp.diffMain(oldData, newData);
         return diff;
     }
@@ -55,17 +55,10 @@ public class PatchCreator {
 
             switch (item.operation) {
                 case DELETE:
-                    try {
-                        oldData = oldData.substring(0, i) + oldData.substring(i).replaceFirst(item.text, "");
-                    } catch (PatternSyntaxException e) {
-                        item.text = "\\"+item.text;
-                        oldData = oldData.substring(0, i) + oldData.substring(i).replaceFirst(item.text, "");
-                    }
                     oneChangePatch.put("mode", false); // mode is INSERT (true) or DELETE (false)
                     break;
 
                 case INSERT:
-                    oldData = oldData.substring(0, i) + item.text + oldData.substring(i);
                     i += item.text.length();
                     oneChangePatch.put("mode", true); // mode is INSERT (true) or DELETE (false)
                     break;

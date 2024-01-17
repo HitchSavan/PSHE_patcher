@@ -2,6 +2,7 @@ package patching;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Patch;
@@ -27,8 +28,14 @@ public class Patcher {
                 newData = newData.substring(0, item.getInt("position")) +
                         item.getString("data") + newData.substring(item.getInt("position"));
             } else {
-                newData = newData.substring(0, item.getInt("position")) +
+                try {
+                    newData = newData.substring(0, item.getInt("position")) +
                         newData.substring(item.getInt("position")).replaceFirst(item.getString("data"), "");
+                } catch (PatternSyntaxException e) {
+                    item.put("data", "\\"+item.getString("data"));
+                    newData = newData.substring(0, item.getInt("position")) +
+                        newData.substring(item.getInt("position")).replaceFirst(item.getString("data"), "");
+                }
             }
         }
 
