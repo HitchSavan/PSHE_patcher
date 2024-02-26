@@ -51,7 +51,7 @@
 *.jar
 *.war
 *.ear
-*.zip
+# *.zip
 
 # Maven
 log/
