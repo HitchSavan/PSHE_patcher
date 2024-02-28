@@ -1,6 +1,8 @@
 package patcher.patching_utils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -84,6 +86,22 @@ public class RunCourgette extends Thread {
 
         RunCourgette.increaseThreadsAmount();
         updateComponent(updatingComponent);
+
+        
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(courgette.getInputStream()));
+        BufferedReader stdError = new BufferedReader(new InputStreamReader(courgette.getErrorStream()));
+
+        // Read the output from the command
+        String s = null;
+        while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+        }
+
+        // Read any errors from the attempted command
+        while ((s = stdError.readLine()) != null) {
+            System.out.println(s);
+        }
+        
         courgette.waitFor();
 
         if (replaceFiles) {
