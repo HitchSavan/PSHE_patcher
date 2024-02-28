@@ -19,7 +19,7 @@ public class UnpackResources {
 
         while ((entry = zis.getNextEntry()) != null) {
             File newFile = newFile(destDir, entry);
-            if (entry.isDirectory()) {
+            if (newFile.isDirectory()) {
                 if (!newFile.isDirectory() && !newFile.mkdirs()) {
                     throw new IOException("Failed to create directory " + newFile);
                 }

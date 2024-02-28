@@ -11,17 +11,45 @@ import patcher.files_utils.UnpackResources;
 
 public class RunCourgette extends Thread {
 
-    private static volatile int currentThreadsAmount = 0;
     public static int MAX_THREADS_AMOUNT = 10;
     public static String os = System.getProperty("os.name").toLowerCase();
-
-    public static int currentThreadsAmount() {
-        return currentThreadsAmount;
-    }
+    private static int currentThreadsAmount = 0;
+    // private static Semaphore courgetteSemaphore = new Semaphore(1);
 
     String[] courgetteArgs = null;
     boolean replaceFiles;
     Label updatingComponent;
+
+    // public static Semaphore courgSemaphore() {
+    //     return courgetteSemaphore;
+    // }
+
+    public synchronized static int currentThreadsAmount() {
+        return currentThreadsAmount;
+    }
+
+    public synchronized static void increaseThreadsAmount() {
+        ++currentThreadsAmount;
+    }
+
+    public synchronized static void decreaseThreadsAmount() {
+        --currentThreadsAmount;
+    }
+
+    public static void updateComponent(Label updatingComponent) {
+        if (updatingComponent != null) {
+            // try {
+            //     courgSemaphore().acquire();
+                Platform.runLater(() -> {
+                    updatingComponent.setText("Active Courgette instances:\t" + RunCourgette.currentThreadsAmount());
+                });
+            // } catch (InterruptedException e) {
+            //     e.printStackTrace();
+            // } finally {
+            //     courgSemaphore().release();
+            // };
+        }
+    }
 
     public static void unpackCourgette() {
         UnpackResources.deleteDirectory("tmp");
@@ -50,15 +78,12 @@ public class RunCourgette extends Thread {
             courgette = RunExecutable.runExec("tmp/linux/courgette", args);
         }
 
-        while (currentThreadsAmount >= MAX_THREADS_AMOUNT) {
-            sleep(10000);
+        while (RunCourgette.currentThreadsAmount() >= MAX_THREADS_AMOUNT) {
+            sleep(1000);
         }
 
-        ++currentThreadsAmount;
-        if (updatingComponent != null)
-            Platform.runLater(() -> {
-                updatingComponent.setText("Active Courgette instances:\t" + RunCourgette.currentThreadsAmount());
-            });
+        RunCourgette.increaseThreadsAmount();
+        updateComponent(updatingComponent);
         courgette.waitFor();
 
         if (replaceFiles) {
@@ -66,11 +91,8 @@ public class RunCourgette extends Thread {
             Files.move(Paths.get(args[3]), Paths.get(args[1]));
             Files.delete(Paths.get(args[3]).getParent());
         }
-        --currentThreadsAmount;
-        if (updatingComponent != null)
-            Platform.runLater(() -> {
-                updatingComponent.setText("Active Courgette instances:\t" + RunCourgette.currentThreadsAmount());
-            });
+        RunCourgette.decreaseThreadsAmount();
+        updateComponent(updatingComponent);
         return courgette;
     }
     
