@@ -31,20 +31,4 @@ public class Patches {
     public static JSONObject getInfo(Map<String, String> params) throws IOException {
         return Connector.connect(infoEndpoint, Connector.Methods.GET, params);
     }
-
-    public static JSONObject postPatches(JSONObject data) throws IOException {
-        return postPatches(data, null);
-    }
-    public static JSONObject deletePatches() throws IOException {
-        return deletePatches();
-    }
-    public static JSONObject getFile() throws IOException {
-        return getFile(null);
-    }
-    public static JSONObject postFile(JSONObject data) throws IOException {
-        return postFile(data, null);
-    }
-    public static JSONObject getInfo() throws IOException {
-        return getInfo(null);
-    }
 }

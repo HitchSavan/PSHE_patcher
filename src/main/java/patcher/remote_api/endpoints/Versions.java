@@ -32,22 +32,7 @@ public class Versions {
         return Connector.connect(switchEndpoint, Connector.Methods.GET, params);
     }
 
-    public static JSONObject postVersions(JSONObject data) throws IOException {
-        return postVersions(data, null);
-    }
-    public static JSONObject deleteVersions() throws IOException {
-        return deleteVersions(null);
-    }
     public static JSONObject getHistory() throws IOException {
         return getHistory(null);
-    }
-    public static JSONObject putRoot(JSONObject data) throws IOException {
-        return putRoot(data, null);
-    }
-    public static JSONObject getVersions() throws IOException {
-        return getVersions(null);
-    }
-    public static JSONObject getSwitch() throws IOException {
-        return getSwitch(null);
     }
 }

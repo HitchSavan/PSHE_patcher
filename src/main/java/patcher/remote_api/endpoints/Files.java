@@ -41,29 +41,4 @@ public class Files {
     public static JSONObject deleteVersion(Map<String, String> params) throws IOException {
         return Connector.connect(versionEndpoint, Connector.Methods.DELETE, params);
     }
-
-    public static JSONObject getFiles() throws IOException {
-        return getFiles(null);
-    }
-    public static JSONObject deleteFiles() throws IOException {
-        return deleteFiles();
-    }
-    public static JSONObject getHistory() throws IOException {
-        return getHistory(null);
-    }
-    public static JSONObject getRoot() throws IOException {
-        return getRoot(null);
-    }
-    public static JSONObject postRoot(JSONObject data) throws IOException {
-        return postRoot(data, null);
-    }
-    public static JSONObject getVersion() throws IOException {
-        return getVersion(null);
-    }
-    public static JSONObject postVersion(JSONObject data) throws IOException {
-        return postVersion(data);
-    }
-    public static JSONObject deleteVersion() throws IOException {
-        return deleteVersion(null);
-    }
 }
