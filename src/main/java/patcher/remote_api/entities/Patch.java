@@ -24,4 +24,12 @@ public class Patch {
         this.filesCount = patch.getInt("files_count");
         this.totalSize = patch.getInt("total_size");
     }
+
+    public JSONObject toJSON() {
+        return new JSONObject()
+                .put("version_from", this.versionFrom)
+                .put("version_to", this.versionTo)
+                .put("files_count", this.filesCount)
+                .put("total_size", this.totalSize);
+    }
 }

@@ -20,4 +20,9 @@ public class File {
         this.checksum = file.getJSONObject("version").getString("checksum");
         this.size = file.getJSONObject("version").getInt("size");
     }
+
+    public JSONObject toJSON() {
+        return new JSONObject().put("location", this.location).put("version",
+                new JSONObject().put("checksum", this.checksum).put("size", this.size));
+    }
 }

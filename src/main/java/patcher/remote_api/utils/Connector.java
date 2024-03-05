@@ -65,8 +65,7 @@ public class Connector {
             response.put("success", false);
         }
 
-        response.put("status", responseCode);
-        response.put("message", con.getResponseMessage());
+        response.put("status", responseCode).put("message", con.getResponseMessage());
 
         con.disconnect();
 

@@ -3,6 +3,7 @@ package patcher.remote_api.entities;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import lombok.Getter;
@@ -31,5 +32,17 @@ public class Version {
             JSONObject jsonItem = (JSONObject) item;
             this.files.put(jsonItem.getString("location"), new VersionFile(jsonItem));
         });
+    }
+
+    public JSONObject toJSON() {
+        JSONObject jsonData = new JSONObject();
+        jsonData.put("v_string", this.versionString)
+                .put("files_count", this.filesCount)
+                .put("total_size", this.totalSize)
+                .put("files", new JSONArray());
+        files.forEach((location, file) -> {
+            jsonData.getJSONArray("files").put(file.toJSON());
+        });
+        return jsonData;
     }
 }

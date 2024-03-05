@@ -20,4 +20,11 @@ public class VersionFile {
         this.checksum = file.getString("checksum");
         this.size = file.getInt("size");
     }
+
+    public JSONObject toJSON() {
+        return new JSONObject()
+                .put("location", this.location)
+                .put("checksum", this.checksum)
+                .put("size", this.size);
+    }
 }

@@ -1,27 +1,29 @@
 package patcher.patching_utils;
 
-import javafx.scene.control.Label;
-
 public class Patcher {
-    public static void generatePatch(String oldFile, String newFile, String patchFile, Label updatingComponent) {
+    public static void generatePatch(String oldFile, String newFile, String patchFile) {
         RunCourgette courgetteInstance = new RunCourgette();
         String[] args = {"-gen", oldFile, newFile, patchFile};
-        for (int k = 0; k < args.length; ++k) {
-            System.out.print(args[k]);
-            System.out.print("\t");
+        if (RunCourgette.allowConsoleOutput) {
+            for (int k = 0; k < args.length; ++k) {
+                System.out.print(args[k]);
+                System.out.print("\t");
+            }
+            System.out.println();
         }
-        System.out.println();
-        courgetteInstance.run(args, false, updatingComponent);
+        courgetteInstance.run(args, false);
     }
 
-    public static void applyPatch(String oldFile, String newFile, String patchFile, boolean replaceFiles, Label updatingComponent) {
+    public static void applyPatch(String oldFile, String newFile, String patchFile, boolean replaceFiles) {
         RunCourgette courgetteInstance = new RunCourgette();
         String[] args = {"-apply", oldFile, patchFile, newFile};
-        for (int i = 0; i < args.length; ++i) {
-            System.out.print(args[i]);
-            System.out.print("\t");
+        if (RunCourgette.allowConsoleOutput) {
+            for (int i = 0; i < args.length; ++i) {
+                System.out.print(args[i]);
+                System.out.print("\t");
+            }
+            System.out.println();
         }
-        System.out.println();
-        courgetteInstance.run(args, replaceFiles, updatingComponent);
+        courgetteInstance.run(args, replaceFiles);
     }
 }
