@@ -15,7 +15,6 @@ import java.util.List;
 import com.github.shyiko.klob.Glob;
 
 public class FileVisitor extends SimpleFileVisitor<Path> {
-
     public List<Path> allFiles = new ArrayList<>();
     private List<String> patterns = new ArrayList<>();
     private List<Path> ignoredFiles = new ArrayList<>();

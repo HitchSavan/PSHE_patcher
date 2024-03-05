@@ -17,14 +17,6 @@ import lombok.Setter;
 import patcher.remote_api.ParamsBuilder;
 
 public class Connector {
-
-    public static enum Methods {
-        GET,
-        PUT,
-        POST,
-        DELETE
-    }
-
     private static Map<Methods, String> methodStrings = new HashMap<>(
         Map.of( Methods.GET, "GET",
                 Methods.PUT, "PUT",
@@ -40,6 +32,7 @@ public class Connector {
 
     public static JSONObject connect(String endpointUrl, Methods method, Map<String, String> parameters, JSONObject data) throws IOException {
         endpointUrl = getBaseUrl() + endpointUrl;
+        System.out.println("Connecting to " + endpointUrl);
         URL url = parameters != null && !parameters.isEmpty() ?
                 ParamsBuilder.getUrlWithParams(endpointUrl, parameters) : new URL(endpointUrl);
 

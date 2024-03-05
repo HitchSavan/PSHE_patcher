@@ -1,25 +1,36 @@
 package patcher.data_utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 public class DataEncoder {
-    
-    public static byte[] decode(String data) {
-        return Base64.getDecoder().decode(data);
+    public static int getByteSize(Path filePath) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(getFileContent(filePath));
+        oos.close();
+        return baos.size();
     }
-    public static String encode(byte[] data) {
-        return Base64.getEncoder().encodeToString(data);
+    
+    public static String getChecksum(Path filePath) throws IOException, NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(getFileContent(filePath));
+        byte[] digest = md.digest();
+        return encode(digest).toLowerCase();
     }
 
-    public static String encodeChecksum(String toEncode) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA3-256");
-        byte[] bytes = digest.digest(toEncode.getBytes());
-        
-        return encode(bytes);
+    private static byte[] getFileContent(Path filePath) throws IOException {
+        return Files.readAllBytes(filePath);
     }
-    public static String encodeChecksum(byte[] toEncode) throws NoSuchAlgorithmException{
-        return encodeChecksum(encode(toEncode));
+    
+    public static String encode(byte[] data) {
+        BigInteger bigInteger = new BigInteger(1, data);
+        return bigInteger.toString(16);
     }
 }

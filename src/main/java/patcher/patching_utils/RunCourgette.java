@@ -12,7 +12,6 @@ import patcher.files_utils.RunExecutable;
 import patcher.files_utils.UnpackResources;
 
 public class RunCourgette extends Thread {
-
     public static int MAX_THREADS_AMOUNT = 10;
     public static String os = System.getProperty("os.name").toLowerCase();
     private static int currentThreadsAmount = 0;

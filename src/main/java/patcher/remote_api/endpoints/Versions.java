@@ -6,6 +6,7 @@ import java.util.Map;
 import org.json.JSONObject;
 
 import patcher.remote_api.utils.Connector;
+import patcher.remote_api.utils.Methods;
 
 public class Versions {
     private static final String baseEndpoint = "/versions";
@@ -14,22 +15,22 @@ public class Versions {
     private static final String switchEndpoint = baseEndpoint + "/switch";
 
     public static JSONObject getVersions(Map<String, String> params) throws IOException {
-        return Connector.connect(baseEndpoint, Connector.Methods.GET, params);
+        return Connector.connect(baseEndpoint, Methods.GET, params);
     }
     public static JSONObject postVersions(JSONObject data, Map<String, String> params) throws IOException {
-        return Connector.connect(baseEndpoint, Connector.Methods.POST, params, data);
+        return Connector.connect(baseEndpoint, Methods.POST, params, data);
     }
     public static JSONObject deleteVersions(Map<String, String> params) throws IOException {
-        return Connector.connect(baseEndpoint, Connector.Methods.DELETE, params);
+        return Connector.connect(baseEndpoint, Methods.DELETE, params);
     }
     public static JSONObject getHistory(Map<String, String> params) throws IOException {
-        return Connector.connect(historyEndpoint, Connector.Methods.GET, params);
+        return Connector.connect(historyEndpoint, Methods.GET, params);
     }
     public static JSONObject putRoot(JSONObject data, Map<String, String> params) throws IOException {
-        return Connector.connect(rootEndpoint, Connector.Methods.PUT, params, data);
+        return Connector.connect(rootEndpoint, Methods.PUT, params, data);
     }
     public static JSONObject getSwitch(Map<String, String> params) throws IOException {
-        return Connector.connect(switchEndpoint, Connector.Methods.GET, params);
+        return Connector.connect(switchEndpoint, Methods.GET, params);
     }
 
     public static JSONObject getHistory() throws IOException {

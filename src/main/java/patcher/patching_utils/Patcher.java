@@ -3,7 +3,6 @@ package patcher.patching_utils;
 import javafx.scene.control.Label;
 
 public class Patcher {
-
     public static void generatePatch(String oldFile, String newFile, String patchFile, Label updatingComponent) {
         RunCourgette courgetteInstance = new RunCourgette();
         String[] args = {"-gen", oldFile, newFile, patchFile};
