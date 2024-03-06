@@ -24,11 +24,16 @@ public class Connector {
                 Methods.DELETE, "DELETE")
     );
 
-    @Getter @Setter
-    private static String baseUrl = "http://tarkov.deadlauncher.fun/api/v1";
+    private static final String apiUrl = "/api/v1";
+    @Getter
+    private static String baseUrl = "http://127.0.0.1:5000" + apiUrl;
 
     @Getter @Setter
     private static int responseCode;
+
+    public static void setBaseUrl(String newBaseUrl) {
+        baseUrl = newBaseUrl + apiUrl;
+    }
 
     public static JSONObject connect(String endpointUrl, Methods method, Map<String, String> parameters, JSONObject data) throws IOException {
         endpointUrl = getBaseUrl() + endpointUrl;
