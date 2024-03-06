@@ -29,6 +29,9 @@ public class Patches {
     public static JSONObject postFile(JSONObject data, Map<String, String> params) throws IOException {
         return Connector.connect(fileEndpoint, Methods.POST, params, data);
     }
+    public static JSONObject deleteFile(Map<String, String> params) throws IOException {
+        return Connector.connect(fileEndpoint, Methods.DELETE, params);
+    }
     public static JSONObject getInfo(Map<String, String> params) throws IOException {
         return Connector.connect(infoEndpoint, Methods.GET, params);
     }
