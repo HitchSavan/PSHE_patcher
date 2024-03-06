@@ -12,6 +12,9 @@ import lombok.Setter;
 public class Version {
     @Getter @Setter
     private String versionString;
+
+    @Getter @Setter
+    private String createdAt;
     
     @Getter @Setter
     private Map<String, VersionFile> files;
@@ -24,6 +27,7 @@ public class Version {
 
     public Version(JSONObject version) {
         this.versionString = version.getString("v_string");
+        this.createdAt = version.getString("created_at");
         this.filesCount = version.getInt("files_count");
         this.totalSize = version.getInt("total_size");
 
