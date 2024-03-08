@@ -20,16 +20,16 @@ public class Version {
     private Map<String, VersionFile> files;
 
     @Getter @Setter
-    private Integer filesCount;
+    private Long filesCount;
 
     @Getter @Setter
-    private Integer totalSize;
+    private Long totalSize;
 
     public Version(JSONObject version) {
         this.versionString = version.getString("v_string");
         this.createdAt = version.getString("created_at");
-        this.filesCount = version.getInt("files_count");
-        this.totalSize = version.getInt("total_size");
+        this.filesCount = version.getLong("files_count");
+        this.totalSize = version.getLong("total_size");
 
         this.files = new HashMap<>();
         version.getJSONArray("files").iterator().forEachRemaining(item -> {

@@ -13,12 +13,12 @@ public class File {
     private String checksum;
     
     @Getter @Setter
-    private Integer size;
+    private Long size;
 
     public File(JSONObject file) {
         this.location = file.getString("location");
         this.checksum = file.getJSONObject("version").getString("checksum");
-        this.size = file.getJSONObject("version").getInt("size");
+        this.size = file.getJSONObject("version").getLong("size");
     }
 
     public JSONObject toJSON() {
