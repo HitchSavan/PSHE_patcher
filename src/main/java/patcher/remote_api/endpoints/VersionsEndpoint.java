@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import patcher.remote_api.utils.Connector;
 import patcher.remote_api.utils.Methods;
 
-public class Versions {
+public class VersionsEndpoint {
     private static final String baseEndpoint = "/versions";
     private static final String historyEndpoint = baseEndpoint + "/history";
     private static final String rootEndpoint = baseEndpoint + "/root";
@@ -17,7 +17,7 @@ public class Versions {
     public static JSONObject getVersions(Map<String, String> params) throws IOException {
         return Connector.connect(baseEndpoint, Methods.GET, params);
     }
-    public static JSONObject postVersions(JSONObject data, Map<String, String> params) throws IOException {
+    public static JSONObject postVersions(byte[] data, Map<String, String> params) throws IOException {
         return Connector.connect(baseEndpoint, Methods.POST, params, data);
     }
     public static JSONObject deleteVersions(Map<String, String> params) throws IOException {
@@ -26,7 +26,7 @@ public class Versions {
     public static JSONObject getHistory(Map<String, String> params) throws IOException {
         return Connector.connect(historyEndpoint, Methods.GET, params);
     }
-    public static JSONObject putRoot(JSONObject data, Map<String, String> params) throws IOException {
+    public static JSONObject putRoot(byte[] data, Map<String, String> params) throws IOException {
         return Connector.connect(rootEndpoint, Methods.PUT, params, data);
     }
     public static JSONObject getSwitch(Map<String, String> params) throws IOException {

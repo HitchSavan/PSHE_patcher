@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -22,15 +23,28 @@ public class DataEncoder {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(getFileContent(filePath));
         byte[] digest = md.digest();
-        return encode(digest).toLowerCase();
+        String checksum = encodeToHex(digest).toLowerCase();
+        return "0".repeat(32 - checksum.length()) + checksum;
+    }
+    
+    public static String getChecksum(byte[] filecontent) throws IOException, NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(filecontent);
+        byte[] digest = md.digest();
+        String checksum = encodeToHex(digest).toLowerCase();
+        return "0".repeat(32 - checksum.length()) + checksum;
     }
 
-    private static byte[] getFileContent(Path filePath) throws IOException {
+    public static byte[] getFileContent(Path filePath) throws IOException {
         return Files.readAllBytes(filePath);
     }
     
-    public static String encode(byte[] data) {
+    private static String encodeToHex(byte[] data) {
         BigInteger bigInteger = new BigInteger(1, data);
         return bigInteger.toString(16);
+    }
+
+    public static String toString(byte[] data) {
+        return new String(data, StandardCharsets.UTF_8);
     }
 }

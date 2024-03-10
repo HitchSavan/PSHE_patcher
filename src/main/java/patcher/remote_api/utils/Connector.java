@@ -2,11 +2,15 @@ package patcher.remote_api.utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +18,7 @@ import org.json.JSONObject;
 
 import lombok.Getter;
 import lombok.Setter;
+import patcher.data_utils.DataEncoder;
 import patcher.remote_api.ParamsBuilder;
 
 public class Connector {
@@ -35,7 +40,7 @@ public class Connector {
         baseUrl = newBaseUrl + apiUrl;
     }
 
-    public static JSONObject connect(String endpointUrl, Methods method, Map<String, String> parameters, JSONObject data) throws IOException {
+    private static HttpURLConnection initConnect(String endpointUrl, Methods method, Map<String, String> parameters) throws IOException {
         endpointUrl = getBaseUrl() + endpointUrl;
         System.out.println("Connecting to " + endpointUrl);
         URL url = parameters != null && !parameters.isEmpty() ?
@@ -46,6 +51,12 @@ public class Connector {
         int responseCode = con.getResponseCode();
         setResponseCode(responseCode);
 
+        return con;
+    }
+
+    public static JSONObject connect(String endpointUrl, Methods method, Map<String, String> parameters, byte[] data) throws IOException {
+        HttpURLConnection con = initConnect(endpointUrl, method, parameters);
+
         JSONObject response = new JSONObject();
 
         if (responseCode < 300) {
@@ -55,7 +66,7 @@ public class Connector {
                     break;
 
                 case PUT:
-                    put(con, data);
+                    put(con, new JSONObject(DataEncoder.toString(data)));
                     break;
 
                 case POST:
@@ -65,9 +76,6 @@ public class Connector {
                 default:
                     break;
             }
-            response.put("success", true);
-        } else {
-            response.put("success", false);
         }
 
         response.put("status", responseCode).put("message", con.getResponseMessage());
@@ -82,8 +90,30 @@ public class Connector {
     public static JSONObject connect(String endpointUrl, Methods method, Map<String, String> parameters) throws IOException {
         return connect(endpointUrl, method, parameters, null);
     }
-    public static JSONObject connect(String endpointUrl, Methods method, JSONObject data) throws IOException {
+    public static JSONObject connect(String endpointUrl, Methods method, byte[] data) throws IOException {
         return connect(endpointUrl, method, null, data);
+    }
+
+    public static JSONObject downloadFile(String endpointUrl, Path filePath, Map<String, String> parameters) throws IOException {
+        HttpURLConnection con = initConnect(endpointUrl, Methods.GET, parameters);
+
+        JSONObject response = new JSONObject();
+
+        InputStream input = con.getInputStream();
+        byte[] buffer = new byte[4096];
+        int n;
+
+        File file = filePath.toFile();
+        filePath.getParent().toFile().mkdirs();
+
+        FileOutputStream output = new FileOutputStream(file);
+        while ((n = input.read(buffer)) != -1) 
+        {
+            output.write(buffer, 0, n);
+        }
+        output.close();
+
+        return response.put("status", responseCode).put("message", con.getResponseMessage());
     }
 
     private static JSONObject get(HttpURLConnection con) throws IOException {
@@ -119,13 +149,12 @@ public class Connector {
         }
     }
 
-    private static JSONObject post(HttpURLConnection con, JSONObject data) throws IOException {
+    private static JSONObject post(HttpURLConnection con, byte[] data) throws IOException {
         con.setDoInput(true);
         con.setDoOutput(true);
 
         try(OutputStream os = con.getOutputStream()) {
-            byte[] input = data.toString().getBytes("utf-8");
-            os.write(input, 0, input.length);			
+            os.write(data, 0, data.length);			
         }
 
         try(BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {

@@ -14,8 +14,12 @@ import java.util.List;
 
 import com.github.shyiko.klob.Glob;
 
+import lombok.Getter;
+
 public class FileVisitor extends SimpleFileVisitor<Path> {
-    public List<Path> allFiles = new ArrayList<>();
+    private Path activeFolder;
+    @Getter
+    private List<Path> allFiles = new ArrayList<>();
     private List<String> patterns = new ArrayList<>();
     private List<Path> ignoredFiles = new ArrayList<>();
     private Iterator<Path> iterator;
@@ -25,36 +29,43 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
     }
 
     public FileVisitor(Path folder) {
-        init(folder);
+        activeFolder = folder;
+        init();
     }
 
-    private void init(Path folder) {
-        if (folder != null && Files.exists(Paths.get(".psheignore"))) {
+    private void init() {
+        if (activeFolder != null && Files.exists(Paths.get(activeFolder.toString(), ".psheignore"))) {
             allFiles.clear();
             patterns.clear();
             ignoredFiles.clear();
 
-            File file = new File(".psheignore");
+            File file = new File(activeFolder.toString(), ".psheignore");
             try {
                 patterns = Files.readAllLines(Paths.get(file.toURI()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            iterator = Glob.from(patterns.toArray(new String[0])).iterate(folder);
+            iterator = Glob.from(patterns.toArray(new String[0])).iterate(activeFolder);
 
             while (iterator.hasNext())
                 ignoredFiles.add(iterator.next());
         }
     }
 
-    public void walkFileTree(Path folder) {
-        init(folder);
+    public List<Path> walkFileTree(Path folder) {
+        activeFolder = folder;
+        init();
         try {
-            Files.walkFileTree(folder, this);
+            Files.walkFileTree(activeFolder, this);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return allFiles;
+    }
+
+    public List<Path> walkFileTree() {
+        return walkFileTree(activeFolder);
     }
 
     @Override

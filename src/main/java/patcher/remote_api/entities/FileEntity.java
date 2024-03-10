@@ -1,13 +1,16 @@
 package patcher.remote_api.entities;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.json.JSONObject;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class File {
+public class FileEntity {
     @Getter @Setter
-    private String location;
+    private Path location;
 
     @Getter @Setter
     private String checksum;
@@ -15,8 +18,8 @@ public class File {
     @Getter @Setter
     private Long size;
 
-    public File(JSONObject file) {
-        this.location = file.getString("location");
+    public FileEntity(JSONObject file) {
+        this.location = Paths.get(file.getString("location"));
         this.checksum = file.getJSONObject("version").getString("checksum");
         this.size = file.getJSONObject("version").getLong("size");
     }

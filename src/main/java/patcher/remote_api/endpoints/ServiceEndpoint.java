@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import patcher.remote_api.utils.Connector;
 import patcher.remote_api.utils.Methods;
 
-public class Service {
+public class ServiceEndpoint {
     private static final String endpoint = "/service/ping";
 
     public static JSONObject ping() throws IOException {

@@ -1,6 +1,7 @@
 package patcher.remote_api.endpoints;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -8,7 +9,7 @@ import org.json.JSONObject;
 import patcher.remote_api.utils.Connector;
 import patcher.remote_api.utils.Methods;
 
-public class Files {
+public class FilesEndpoint {
     private static final String baseEndpoint = "/files";
     private static final String allFilesEndpoint = baseEndpoint + "/all";
     private static final String historyEndpoint = baseEndpoint + "/history";
@@ -27,16 +28,16 @@ public class Files {
     public static JSONObject getHistory(Map<String, String> params) throws IOException {
         return Connector.connect(historyEndpoint, Methods.GET, params);
     }
-    public static JSONObject getRoot(Map<String, String> params) throws IOException {
-        return Connector.connect(rootEndpoint, Methods.GET, params);
+    public static JSONObject getRoot(Path filepath, Map<String, String> params) throws IOException {
+        return Connector.downloadFile(rootEndpoint, filepath, params);
     }
-    public static JSONObject postRoot(JSONObject data, Map<String, String> params) throws IOException {
+    public static JSONObject postRoot(byte[] data, Map<String, String> params) throws IOException {
         return Connector.connect(rootEndpoint, Methods.POST, params, data);
     }
     public static JSONObject getVersion(Map<String, String> params) throws IOException {
         return Connector.connect(versionEndpoint, Methods.GET, params);
     }
-    public static JSONObject postVersion(JSONObject data, Map<String, String> params) throws IOException {
+    public static JSONObject postVersion(byte[] data, Map<String, String> params) throws IOException {
         return Connector.connect(versionEndpoint, Methods.POST, params, data);
     }
     public static JSONObject deleteVersion(Map<String, String> params) throws IOException {

@@ -1,5 +1,7 @@
 package patcher.remote_api.entities;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +11,7 @@ import org.json.JSONObject;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Version {
+public class VersionEntity {
     @Getter @Setter
     private String versionString;
 
@@ -17,7 +19,7 @@ public class Version {
     private String createdAt;
     
     @Getter @Setter
-    private Map<String, VersionFile> files;
+    private Map<Path, VersionFileEntity> files;
 
     @Getter @Setter
     private Long filesCount;
@@ -25,16 +27,20 @@ public class Version {
     @Getter @Setter
     private Long totalSize;
 
-    public Version(JSONObject version) {
+    @Getter @Setter
+    private boolean isRoot;
+
+    public VersionEntity(JSONObject version) {
         this.versionString = version.getString("v_string");
         this.createdAt = version.getString("created_at");
         this.filesCount = version.getLong("files_count");
         this.totalSize = version.getLong("total_size");
+        this.isRoot = version.getBoolean("is_root");
 
         this.files = new HashMap<>();
         version.getJSONArray("files").iterator().forEachRemaining(item -> {
             JSONObject jsonItem = (JSONObject) item;
-            this.files.put(jsonItem.getString("location"), new VersionFile(jsonItem));
+            this.files.put(Paths.get(jsonItem.getString("location")), new VersionFileEntity(jsonItem));
         });
     }
 

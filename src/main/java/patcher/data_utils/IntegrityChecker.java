@@ -8,6 +8,9 @@ public class IntegrityChecker {
         return fileChecksum.equals(checksum);
     }
     public static boolean compareChecksum(Path file, String checksum) throws NoSuchAlgorithmException, IOException {
-        return DataEncoder.getChecksum(file).equals(checksum);
+        return compareChecksum(DataEncoder.getChecksum(file), checksum);
+    }
+    public static boolean compareChecksum(byte[] filecontent, String checksum) throws NoSuchAlgorithmException, IOException {
+        return compareChecksum(DataEncoder.getChecksum(filecontent), checksum);
     }
 }

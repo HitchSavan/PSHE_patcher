@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Patch {
+public class PatchEntity {
     @Getter @Setter
     private String versionFrom;
     
@@ -18,7 +18,7 @@ public class Patch {
     @Getter @Setter
     private Long totalSize;
 
-    public Patch(JSONObject patch) {
+    public PatchEntity(JSONObject patch) {
         this.versionFrom = patch.getString("version_from");
         this.versionTo = patch.getString("version_to");
         this.filesCount = patch.getLong("files_count");
