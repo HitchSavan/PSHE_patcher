@@ -30,12 +30,12 @@ public class RunCourgette {
         }
     }
 
-    public Process runExec(String[] args) throws IOException, InterruptedException {
+    public Process runExec(String[] args, boolean redirectOutput) throws IOException, InterruptedException {
         Process courgette = null;
         if (os.contains("windows")) {
-            courgette = RunExecutable.runExec("tmp/win/courgette.exe", args);
+            courgette = RunExecutable.runExec("tmp/win/courgette.exe", args, redirectOutput);
         } else if (os.contains("linux")) {
-            courgette = RunExecutable.runExec("tmp/linux/courgette", args);
+            courgette = RunExecutable.runExec("tmp/linux/courgette", args, redirectOutput);
         }
         if (allowConsoleOutput) {
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(courgette.getInputStream()));
@@ -64,11 +64,11 @@ public class RunCourgette {
         return courgette;
     }
     
-    public void run(String[] args, boolean _replaceFiles) {
+    public void run(String[] args, boolean _replaceFiles, boolean redirectOutput) {
         courgetteArgs = args;
         replaceFiles = _replaceFiles;
         try {
-            runExec(courgetteArgs);
+            runExec(courgetteArgs, redirectOutput);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

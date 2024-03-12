@@ -1,7 +1,7 @@
 package patcher.patching_utils;
 
 public class Patcher {
-    public static void generatePatch(String oldFile, String newFile, String patchFile) {
+    public static void generatePatch(String oldFile, String newFile, String patchFile, boolean redirectOutput) {
         RunCourgette courgetteInstance = new RunCourgette();
         String[] args = {"-gen", oldFile, newFile, patchFile};
         if (RunCourgette.allowConsoleOutput) {
@@ -11,10 +11,10 @@ public class Patcher {
             }
             System.out.println();
         }
-        courgetteInstance.run(args, false);
+        courgetteInstance.run(args, false, redirectOutput);
     }
 
-    public static void applyPatch(String oldFile, String newFile, String patchFile, boolean replaceFiles) {
+    public static void applyPatch(String oldFile, String newFile, String patchFile, boolean replaceFiles, boolean redirectOutput) {
         RunCourgette courgetteInstance = new RunCourgette();
         String[] args = {"-apply", oldFile, patchFile, newFile};
         if (RunCourgette.allowConsoleOutput) {
@@ -24,6 +24,6 @@ public class Patcher {
             }
             System.out.println();
         }
-        courgetteInstance.run(args, replaceFiles);
+        courgetteInstance.run(args, replaceFiles, redirectOutput);
     }
 }
