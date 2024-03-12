@@ -19,27 +19,22 @@ public class DataEncoder {
         return baos.size();
     }
     
-    public static String getChecksum(Path filePath) throws IOException, NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        md.update(getFileContent(filePath));
-        byte[] digest = md.digest();
-        String checksum = encodeToHex(digest).toLowerCase();
-        return "0".repeat(32 - checksum.length()) + checksum;
-    }
-    
     public static String getChecksum(byte[] filecontent) throws IOException, NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(filecontent);
         byte[] digest = md.digest();
-        String checksum = encodeToHex(digest).toLowerCase();
+        String checksum = toHexString(digest).toLowerCase();
         return "0".repeat(32 - checksum.length()) + checksum;
+    }
+    public static String getChecksum(Path filePath) throws IOException, NoSuchAlgorithmException {
+        return getChecksum(getFileContent(filePath));
     }
 
     public static byte[] getFileContent(Path filePath) throws IOException {
         return Files.readAllBytes(filePath);
     }
     
-    private static String encodeToHex(byte[] data) {
+    private static String toHexString(byte[] data) {
         BigInteger bigInteger = new BigInteger(1, data);
         return bigInteger.toString(16);
     }

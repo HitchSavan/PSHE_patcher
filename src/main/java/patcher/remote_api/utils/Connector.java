@@ -32,7 +32,6 @@ public class Connector {
     private static final String apiUrl = "/api/v1";
     @Getter
     private static String baseUrl = "http://127.0.0.1:5000" + apiUrl;
-
     @Getter @Setter
     private static int responseCode;
 

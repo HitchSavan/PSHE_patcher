@@ -14,7 +14,6 @@ public class ParamsBuilder {
     }
 
     public static String getParamsString(Map<String, String> params) throws UnsupportedEncodingException {
-        // StringBuilder result = new StringBuilder();
         StringBuilder result = new StringBuilder("?");
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
