@@ -1,4 +1,4 @@
-package patcher.patching_utils;
+package patcher.utils.patching_utils;
 
 public class Patcher {
     public static void generatePatch(String oldFile, String newFile, String patchFile, boolean redirectOutput) {

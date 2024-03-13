@@ -1,4 +1,4 @@
-package patcher.data_utils;
+package patcher.utils.data_utils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;

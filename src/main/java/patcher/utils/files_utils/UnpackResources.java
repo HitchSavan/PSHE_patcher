@@ -1,4 +1,4 @@
-package patcher.files_utils;
+package patcher.utils.files_utils;
 
 import java.io.File;
 import java.io.FileOutputStream;

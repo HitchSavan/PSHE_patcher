@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import org.json.JSONObject;
 
-import patcher.remote_api.utils.Connector;
-import patcher.remote_api.utils.Methods;
+import patcher.utils.remote_utils.Connector;
+import patcher.utils.remote_utils.Methods;
 
 public class ServiceEndpoint {
     private static final String endpoint = "/service/ping";

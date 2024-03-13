@@ -1,4 +1,4 @@
-package patcher.files_utils;
+package patcher.utils.files_utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,11 +34,11 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
     }
 
     private void init() {
-        if (activeFolder != null && Files.exists(Paths.get(activeFolder.toString(), ".psheignore"))) {
-            allFiles.clear();
-            patterns.clear();
-            ignoredFiles.clear();
+        allFiles.clear();
+        patterns.clear();
+        ignoredFiles.clear();
 
+        if (activeFolder != null && Files.exists(Paths.get(activeFolder.toString(), ".psheignore"))) {
             File file = new File(activeFolder.toString(), ".psheignore");
             try {
                 patterns = Files.readAllLines(Paths.get(file.toURI()));

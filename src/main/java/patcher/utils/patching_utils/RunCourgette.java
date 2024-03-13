@@ -1,4 +1,4 @@
-package patcher.patching_utils;
+package patcher.utils.patching_utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import patcher.files_utils.RunExecutable;
-import patcher.files_utils.UnpackResources;
+import patcher.utils.files_utils.RunExecutable;
+import patcher.utils.files_utils.UnpackResources;
 
 public class RunCourgette {
     public static String os = System.getProperty("os.name").toLowerCase();

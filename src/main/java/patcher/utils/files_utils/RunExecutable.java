@@ -1,4 +1,4 @@
-package patcher.files_utils;
+package patcher.utils.files_utils;
 
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;

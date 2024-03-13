@@ -1,4 +1,4 @@
-package patcher.data_utils;
+package patcher.utils.data_utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

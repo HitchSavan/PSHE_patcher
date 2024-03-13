@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import patcher.remote_api.utils.Connector;
-import patcher.remote_api.utils.Methods;
+import patcher.utils.remote_utils.Connector;
+import patcher.utils.remote_utils.Methods;
 
 public class VersionsEndpoint {
     private static final String baseEndpoint = "/versions";

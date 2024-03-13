@@ -16,13 +16,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import patcher.data_utils.DataEncoder;
-import patcher.data_utils.IntegrityChecker;
-import patcher.files_utils.FileVisitor;
 import patcher.remote_api.endpoints.FilesEndpoint;
 import patcher.remote_api.endpoints.VersionsEndpoint;
 import patcher.remote_api.entities.VersionEntity;
-import patcher.remote_api.utils.Connector;
+import patcher.utils.data_utils.DataEncoder;
+import patcher.utils.data_utils.IntegrityChecker;
+import patcher.utils.files_utils.FileVisitor;
+import patcher.utils.remote_utils.Connector;
 
 public class PatcherMain {
     public static void main(String[] args) throws IOException {
