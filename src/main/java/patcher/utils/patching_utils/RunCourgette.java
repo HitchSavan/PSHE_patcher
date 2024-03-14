@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import patcher.utils.files_utils.RunExecutable;
-import patcher.utils.files_utils.UnpackResources;
+import patcher.utils.files_utils.Directories;
 
 public class RunCourgette {
     public static String os = System.getProperty("os.name").toLowerCase();
@@ -16,17 +16,13 @@ public class RunCourgette {
     String[] courgetteArgs = null;
     boolean replaceFiles;
 
-    public static void unpackCourgette() {
-        UnpackResources.deleteDirectory("tmp");
+    public static void unpackCourgette() throws IOException {
+        Directories.deleteDirectory("tmp");
 
-        try {
-            if (os.contains("windows")) {
-                UnpackResources.unpackResources("/win", "tmp");
-            } else if (os.contains("linux")) {
-                UnpackResources.unpackResources("/linux", "tmp");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (os.contains("windows")) {
+            Directories.unpackResources("/win", "tmp");
+        } else if (os.contains("linux")) {
+            Directories.unpackResources("/linux", "tmp");
         }
     }
 
@@ -64,13 +60,9 @@ public class RunCourgette {
         return courgette;
     }
     
-    public void run(String[] args, boolean _replaceFiles, boolean redirectOutput) {
+    public void run(String[] args, boolean _replaceFiles, boolean redirectOutput) throws IOException, InterruptedException {
         courgetteArgs = args;
         replaceFiles = _replaceFiles;
-        try {
-            runExec(courgetteArgs, redirectOutput);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        runExec(courgetteArgs, redirectOutput);
     }
 }

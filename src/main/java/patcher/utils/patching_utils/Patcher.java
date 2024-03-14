@@ -1,7 +1,9 @@
 package patcher.utils.patching_utils;
 
+import java.io.IOException;
+
 public class Patcher {
-    public static void generatePatch(String oldFile, String newFile, String patchFile, boolean redirectOutput) {
+    public static void generatePatch(String oldFile, String newFile, String patchFile, boolean redirectOutput) throws IOException, InterruptedException {
         RunCourgette courgetteInstance = new RunCourgette();
         String[] args = {"-gen", oldFile, newFile, patchFile};
         if (RunCourgette.allowConsoleOutput) {
@@ -14,7 +16,7 @@ public class Patcher {
         courgetteInstance.run(args, false, redirectOutput);
     }
 
-    public static void applyPatch(String oldFile, String newFile, String patchFile, boolean replaceFiles, boolean redirectOutput) {
+    public static void applyPatch(String oldFile, String newFile, String patchFile, boolean replaceFiles, boolean redirectOutput) throws IOException, InterruptedException {
         RunCourgette courgetteInstance = new RunCourgette();
         String[] args = {"-apply", oldFile, patchFile, newFile};
         if (RunCourgette.allowConsoleOutput) {

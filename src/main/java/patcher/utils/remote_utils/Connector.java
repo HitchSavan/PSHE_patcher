@@ -128,21 +128,21 @@ public class Connector {
         return new JSONObject(content.toString());
     }
 
-    private static void put(HttpURLConnection con, JSONObject data) {
+    private static void put(HttpURLConnection con, JSONObject data) throws IOException {
         DataOutputStream dataOutputStream = null;
         try {
             con.setDoOutput(true);
             dataOutputStream = new DataOutputStream(con.getOutputStream());
             dataOutputStream.write(data.toString().getBytes());
         } catch (IOException exception) {
-            exception.printStackTrace();
-        }  finally {
+            throw exception;
+        } finally {
             if (dataOutputStream != null) {
                 try {
                     dataOutputStream.flush();
                     dataOutputStream.close();
                 } catch (IOException exception) {
-                    exception.printStackTrace();
+                    throw exception;
                 }
             }
         }

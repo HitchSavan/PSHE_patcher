@@ -9,9 +9,12 @@ import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class UnpackResources {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class Directories {
     public static void unpackResources(String source, String target) throws IOException {
-        InputStream is = UnpackResources.class.getResourceAsStream(source + ".zip");
+        InputStream is = Directories.class.getResourceAsStream(source + ".zip");
         ZipInputStream zis = new ZipInputStream(is);
 
         byte[] buffer = new byte[1024];
@@ -41,7 +44,7 @@ public class UnpackResources {
         }
     }
 
-    public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+    private static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
         File destFile = new File(destinationDir, zipEntry.getName());
     
         String destDirPath = destinationDir.getCanonicalPath();
@@ -68,5 +71,12 @@ public class UnpackResources {
     }
     public static void deleteDirectory(Path directoryToBeDeleted) {
         deleteDirectory(directoryToBeDeleted.toString());
+    }
+
+    public static void saveJSONFile(Path file, JSONObject content) throws JSONException, IOException {
+        FileOutputStream jsonOutputStream;
+        jsonOutputStream = new FileOutputStream(file.toString());
+        jsonOutputStream.write(content.toString(4).getBytes());
+        jsonOutputStream.close();
     }
 }

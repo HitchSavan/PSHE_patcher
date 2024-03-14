@@ -24,28 +24,23 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
     private List<Path> ignoredFiles = new ArrayList<>();
     private Iterator<Path> iterator;
     
-    public FileVisitor() {
+    public FileVisitor() throws IOException {
         this(null);
     }
 
-    public FileVisitor(Path folder) {
+    public FileVisitor(Path folder) throws IOException {
         activeFolder = folder;
         init();
     }
 
-    private void init() {
+    private void init() throws IOException {
         allFiles.clear();
         patterns.clear();
         ignoredFiles.clear();
 
         if (activeFolder != null && Files.exists(Paths.get(activeFolder.toString(), ".psheignore"))) {
             File file = new File(activeFolder.toString(), ".psheignore");
-            try {
-                patterns = Files.readAllLines(Paths.get(file.toURI()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            patterns = Files.readAllLines(Paths.get(file.toURI()));
             iterator = Glob.from(patterns.toArray(new String[0])).iterate(activeFolder);
 
             while (iterator.hasNext())
@@ -53,18 +48,15 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
         }
     }
 
-    public List<Path> walkFileTree(Path folder) {
+    public List<Path> walkFileTree(Path folder) throws IOException {
         activeFolder = folder;
         init();
-        try {
-            Files.walkFileTree(activeFolder, this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Files.walkFileTree(activeFolder, this);
+        
         return allFiles;
     }
 
-    public List<Path> walkFileTree() {
+    public List<Path> walkFileTree() throws IOException {
         return walkFileTree(activeFolder);
     }
 
