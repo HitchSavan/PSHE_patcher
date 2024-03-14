@@ -11,7 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class DataEncoder {
-    public static int getByteSize(Path filePath) throws IOException {
+    public static long getByteSize(Path filePath) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(getFileContent(filePath));
