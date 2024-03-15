@@ -1,8 +1,6 @@
 package patcher.utils.data_utils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,11 +10,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class DataEncoder {
     public static long getByteSize(Path filePath) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(getFileContent(filePath));
-        oos.close();
-        return baos.size();
+        return filePath.toFile().length();
     }
     
     public static String getChecksum(byte[] filecontent) throws IOException, NoSuchAlgorithmException {

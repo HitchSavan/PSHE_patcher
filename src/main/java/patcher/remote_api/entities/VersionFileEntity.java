@@ -23,6 +23,11 @@ public class VersionFileEntity {
         this.checksum = file.getString("checksum");
         this.size = file.getLong("size");
     }
+    public VersionFileEntity(JSONObject file, Path location) {
+        this.location = location;
+        this.checksum = file.getString("checksum");
+        this.size = file.getLong("size");
+    }
 
     public JSONObject toJSON() {
         return new JSONObject()

@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +30,7 @@ public class PatcherMain {
         Map<String, String> parameters = new HashMap<>();
 
         Connector.setBaseUrl("http://tarkov.deadlauncher.fun");
-        Path projectPath = Paths.get("C:\\Games\\EscapeFromVagina\\game");
+        Path projectPath = Paths.get("D:\\projects\\Jabix\\pshe\\PSHE_user_client\\test files\\patched_tmp\\game — копия");
 
         if (Files.exists(Paths.get(projectPath.toString(), "config.json"))) {
             File file = new File(Paths.get(projectPath.toString(), "config.json").toString());
@@ -47,9 +48,13 @@ public class PatcherMain {
         JSONObject versionInfo = VersionsEndpoint.getVersions(parameters);
         VersionEntity version = new VersionEntity(versionInfo.getJSONObject("version"));
 
+        AtomicInteger counter = new AtomicInteger(0);
+
         FileVisitor fileVisitor = new FileVisitor(projectPath);
         Map<Path, Path> localFiles = new HashMap<>();
         fileVisitor.walkFileTree().forEach(filePath -> {
+            if (counter.getAndIncrement() % 50 == 0)
+                System.out.println(counter.get());
             if (!filePath.endsWith(".psheignore")) {
                 localFiles.put(projectPath.relativize(filePath), filePath);
                 if (!version.getFiles().keySet().contains(projectPath.relativize(filePath))) {
@@ -59,8 +64,11 @@ public class PatcherMain {
                 }
             }
         });
-
+        System.out.println("Checksums");
+        counter.set(0);
         version.getFiles().keySet().forEach(item -> {
+            if (counter.getAndIncrement() % 50 == 0)
+                System.out.println(Double.valueOf(counter.get()) / version.getFiles().keySet().size() * 100);
             if (!localFiles.keySet().contains(item)) {
                 dump.append("Not found in local: ");
                 dump.append(item);
