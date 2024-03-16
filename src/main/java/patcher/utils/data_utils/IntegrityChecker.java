@@ -1,8 +1,9 @@
 package patcher.utils.data_utils;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,15 +23,26 @@ public class IntegrityChecker {
         ArrayList<Path> missingFiles = new ArrayList<>();
         ArrayList<Path> deletedFiles = new ArrayList<>();
         ArrayList<Path> unchangedFiles = new ArrayList<>();
+
+        StringBuffer integrityDump = new StringBuffer();
+
         patchedFiles.forEach((relativeFile, file) -> {
             System.err.print("checking ");
             System.err.println(file);
             try {
                 if (!versionFiles.containsKey(relativeFile)) {
+                    integrityDump.append("Not found in remote (deleted) ").append(file).append(System.lineSeparator());
                     deletedFiles.add(file);
                 } else {
                     if (DataEncoder.getByteSize(file) == versionFiles.get(relativeFile).getSize()) {
                         if (!compareChecksum(file, versionFiles.get(relativeFile).getChecksum())) {
+                            integrityDump.append("Failed checksum (patched) ")
+                                    .append(file)
+                                    .append(" local: ")
+                                    .append(DataEncoder.getChecksum(file))
+                                    .append(" remote: ")
+                                    .append(versionFiles.get(relativeFile).getChecksum())
+                                    .append(System.lineSeparator());
                             System.out.print("Failed checksum (patched) ");
                             System.out.print(DataEncoder.getChecksum(file));
                             System.out.print(" ");
@@ -38,6 +50,13 @@ public class IntegrityChecker {
                             failedFiles.add(file);
                         }
                     } else {
+                        integrityDump.append("Failed filesize (patched) ")
+                                .append(file)
+                                .append(" local: ")
+                                .append(DataEncoder.getByteSize(file))
+                                .append(" remote: ")
+                                .append(versionFiles.get(relativeFile).getSize())
+                                .append(System.lineSeparator());
                         System.out.print("Failed filesize (patched) ");
                         System.out.print(DataEncoder.getByteSize(file));
                         System.out.print(" ");
@@ -51,23 +70,42 @@ public class IntegrityChecker {
         });
 
         versionFiles.keySet().forEach(remoteFile -> {
-            Path file = Paths.get(oldProjectPath.toString(), remoteFile.toString());
+            Path file = oldProjectPath.resolve(remoteFile.toString());
             System.err.print("checking remote ");
             System.err.println(remoteFile);
             if (!patchedFiles.containsKey(remoteFile)) {
+                integrityDump.append("Remote not found in local ")
+                        .append(file)
+                        .append(System.lineSeparator());
                 if (Files.exists(file)) {
+                    integrityDump.append("\tRemote found in old project")
+                            .append(System.lineSeparator());
                     try {
                         if (DataEncoder.getByteSize(file) == versionFiles.get(remoteFile).getSize()) {
                             if (!compareChecksum(file, versionFiles.get(remoteFile).getChecksum())) {
+                                integrityDump.append("\t\tFailed checksum (old) ")
+                                        .append(" local: ")
+                                        .append(DataEncoder.getChecksum(file))
+                                        .append(" remote: ")
+                                        .append(versionFiles.get(remoteFile).getChecksum())
+                                        .append(System.lineSeparator());
                                 System.out.print("Failed checksum (old) ");
                                 System.out.print(DataEncoder.getChecksum(file));
                                 System.out.print(" ");
                                 System.out.println(versionFiles.get(remoteFile).getChecksum());
                                 missingFiles.add(remoteFile);
                             } else {
+                                integrityDump.append("\t\tFile unchanged (copied from old)")
+                                        .append(System.lineSeparator());
                                 unchangedFiles.add(file);
                             }
                         } else {
+                            integrityDump.append("\t\tFailed filesize (old) ")
+                                    .append(" local: ")
+                                    .append(DataEncoder.getByteSize(file))
+                                    .append(" remote: ")
+                                    .append(versionFiles.get(remoteFile).getSize())
+                                    .append(System.lineSeparator());
                             System.out.print("Failed filesize (old) ");
                             System.out.print(DataEncoder.getByteSize(file));
                             System.out.print(" ");
@@ -78,10 +116,31 @@ public class IntegrityChecker {
                         e.printStackTrace();
                     }
                 } else {
+                    integrityDump.append("\tRemote not found in old project (added)")
+                            .append(System.lineSeparator());
                     missingFiles.add(remoteFile);
                 }
             }
         });
+
+        integrityDump.append("Total checked files: ")
+                .append(failedFiles.size() + missingFiles.size() + deletedFiles.size() + unchangedFiles.size())
+                .append(System.lineSeparator())
+                .append("Total failed files: ")
+                .append(failedFiles.size())
+                .append(System.lineSeparator())
+                .append("Total missing files: ")
+                .append(missingFiles.size())
+                .append(System.lineSeparator())
+                .append("Total deleted files: ")
+                .append(deletedFiles.size())
+                .append(System.lineSeparator())
+                .append("Total unchanged files: ")
+                .append(unchangedFiles.size());
+                
+        BufferedWriter writer = new BufferedWriter(new FileWriter("integrity_dump.txt"));
+        writer.write(integrityDump.toString());
+        writer.close();
 
         Map<String, ArrayList<Path>> result = new HashMap<>(
             Map.of("failed", failedFiles,

@@ -102,15 +102,17 @@ public class Connector {
         byte[] buffer = new byte[4096];
         int n;
 
-        File file = filePath.toFile();
-        filePath.getParent().toFile().mkdirs();
+        if (responseCode == 200) {
+            File file = filePath.toFile();
+            filePath.getParent().toFile().mkdirs();
 
-        FileOutputStream output = new FileOutputStream(file);
-        while ((n = input.read(buffer)) != -1) 
-        {
-            output.write(buffer, 0, n);
+            FileOutputStream output = new FileOutputStream(file);
+            while ((n = input.read(buffer)) != -1) 
+            {
+                output.write(buffer, 0, n);
+            }
+            output.close();
         }
-        output.close();
 
         return response.put("status", responseCode).put("message", con.getResponseMessage());
     }

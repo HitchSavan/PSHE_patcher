@@ -38,7 +38,7 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
         patterns.clear();
         ignoredFiles.clear();
 
-        if (activeFolder != null && Files.exists(Paths.get(activeFolder.toString(), ".psheignore"))) {
+        if (activeFolder != null && Files.exists(activeFolder.resolve(".psheignore"))) {
             File file = new File(activeFolder.toString(), ".psheignore");
             patterns = Files.readAllLines(Paths.get(file.toURI()));
             iterator = Glob.from(patterns.toArray(new String[0])).iterate(activeFolder);
