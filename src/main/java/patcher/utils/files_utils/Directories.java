@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 public class Directories {
     public static void unpackResources(String source, Path target) throws IOException {
-        InputStream is = Directories.class.getResourceAsStream(source + ".zip");
+        InputStream is = Directories.class.getResourceAsStream("/" + source + ".zip");
         ZipInputStream zis = new ZipInputStream(is);
 
         byte[] buffer = new byte[1024];
