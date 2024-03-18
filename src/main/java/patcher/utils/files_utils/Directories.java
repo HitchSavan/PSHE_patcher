@@ -13,13 +13,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Directories {
-    public static void unpackResources(String source, String target) throws IOException {
+    public static void unpackResources(String source, Path target) throws IOException {
         InputStream is = Directories.class.getResourceAsStream(source + ".zip");
         ZipInputStream zis = new ZipInputStream(is);
 
         byte[] buffer = new byte[1024];
         ZipEntry entry;
-        File destDir = new File(target);
+        File destDir = target.toFile();
 
         while ((entry = zis.getNextEntry()) != null) {
             File newFile = newFile(destDir, entry);

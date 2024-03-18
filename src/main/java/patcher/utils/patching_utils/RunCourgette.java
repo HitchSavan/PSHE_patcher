@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import patcher.utils.files_utils.RunExecutable;
@@ -15,35 +16,40 @@ public class RunCourgette {
 
     String[] courgetteArgs = null;
     boolean replaceFiles;
+    static private Path courgettePath;
 
-    public static void unpackCourgette() throws IOException {
+    public static Path unpackCourgette() throws IOException {
         Directories.deleteDirectory("tmp");
+        String osName = null;
+        String courgetteName = "courgette";
 
         if (os.contains("windows")) {
-            Directories.unpackResources("/win", "tmp");
+            osName = "win";
+            courgetteName = courgetteName + ".exe";
         } else if (os.contains("linux")) {
-            Directories.unpackResources("/linux", "tmp");
+            osName = "linux";
+        } else {
+            System.out.println("Cant detect user OS");
+            System.exit(58008);
         }
+        Directories.unpackResources(osName, Paths.get("tmp"));
+        courgettePath = Paths.get("tmp", osName, courgetteName).toAbsolutePath();
+
+        return courgettePath;
     }
 
-    public Process runExec(String[] args, boolean redirectOutput) throws IOException, InterruptedException {
+    public Process runExec(String[] args, Path projectParentPath, boolean redirectOutput) throws IOException, InterruptedException {
         Process courgette = null;
-        if (os.contains("windows")) {
-            courgette = RunExecutable.runExec("tmp/win/courgette.exe", args, redirectOutput);
-        } else if (os.contains("linux")) {
-            courgette = RunExecutable.runExec("tmp/linux/courgette", args, redirectOutput);
-        }
+        courgette = RunExecutable.runExec(courgettePath.toString(), args, projectParentPath, redirectOutput);
+
         if (allowConsoleOutput) {
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(courgette.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(courgette.getErrorStream()));
 
-            // Read the output from the command
             String s = null;
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
             }
-
-            // Read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
                 System.out.println(s);
             }
@@ -60,9 +66,9 @@ public class RunCourgette {
         return courgette;
     }
     
-    public void run(String[] args, boolean _replaceFiles, boolean redirectOutput) throws IOException, InterruptedException {
+    public void run(String[] args, Path projectParentPath, boolean _replaceFiles, boolean redirectOutput) throws IOException, InterruptedException {
         courgetteArgs = args;
         replaceFiles = _replaceFiles;
-        runExec(courgetteArgs, redirectOutput);
+        runExec(courgetteArgs, projectParentPath, redirectOutput);
     }
 }

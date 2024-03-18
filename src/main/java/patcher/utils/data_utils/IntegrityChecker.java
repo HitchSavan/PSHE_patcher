@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -17,110 +18,124 @@ import patcher.remote_api.entities.VersionEntity;
 import patcher.remote_api.entities.VersionFileEntity;
 
 public class IntegrityChecker {
-    public static Map<String, ArrayList<Path>> checkRemoteIntegrity(
+    private static void checkLocalIntegrity(Path file, Path relativeFile,
+            List<Path> failedFiles, List<Path> deletedFiles, Map<Path, VersionFileEntity> versionFiles, StringBuffer integrityDump) {
+        try {
+            if (!versionFiles.containsKey(relativeFile)) {
+                integrityDump.append("Not found in remote (deleted) ").append(file).append(System.lineSeparator());
+                deletedFiles.add(file);
+            } else {
+                if (DataEncoder.getByteSize(file) == versionFiles.get(relativeFile).getSize()) {
+                    if (!compareChecksum(file, versionFiles.get(relativeFile).getChecksum())) {
+                        integrityDump.append("Failed checksum (patched) ")
+                                .append(file)
+                                .append(" local: ")
+                                .append(DataEncoder.getChecksum(file))
+                                .append(" remote: ")
+                                .append(versionFiles.get(relativeFile).getChecksum())
+                                .append(System.lineSeparator());
+                        System.out.print("Failed checksum (patched) ");
+                        System.out.print(DataEncoder.getChecksum(file));
+                        System.out.print(" ");
+                        System.out.println(versionFiles.get(relativeFile).getChecksum());
+                        failedFiles.add(file);
+                    }
+                } else {
+                    integrityDump.append("Failed filesize (patched) ")
+                            .append(file)
+                            .append(" local: ")
+                            .append(DataEncoder.getByteSize(file))
+                            .append(" remote: ")
+                            .append(versionFiles.get(relativeFile).getSize())
+                            .append(System.lineSeparator());
+                    System.out.print("Failed filesize (patched) ");
+                    System.out.print(DataEncoder.getByteSize(file));
+                    System.out.print(" ");
+                    System.out.println(versionFiles.get(relativeFile).getSize());
+                    failedFiles.add(file);
+                }
+            }
+        } catch (IOException | NoSuchAlgorithmException | JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void checkRemoteIntegrity(Path file, Path remoteFile, Map<Path, Path> patchedFiles,
+            List<Path> unchangedFiles, List<Path> missingFiles, Map<Path, VersionFileEntity> versionFiles, StringBuffer integrityDump) {
+        if (!patchedFiles.containsKey(remoteFile)) {
+            integrityDump.append("Remote not found in local ")
+                    .append(file)
+                    .append(System.lineSeparator());
+            if (Files.exists(file)) {
+                integrityDump.append("\tRemote found in old project")
+                        .append(System.lineSeparator());
+                try {
+                    if (DataEncoder.getByteSize(file) == versionFiles.get(remoteFile).getSize()) {
+                        if (!compareChecksum(file, versionFiles.get(remoteFile).getChecksum())) {
+                            integrityDump.append("\t\tFailed checksum (old) ")
+                                    .append(" local: ")
+                                    .append(DataEncoder.getChecksum(file))
+                                    .append(" remote: ")
+                                    .append(versionFiles.get(remoteFile).getChecksum())
+                                    .append(System.lineSeparator());
+                            System.out.print("Failed checksum (old) ");
+                            System.out.print(DataEncoder.getChecksum(file));
+                            System.out.print(" ");
+                            System.out.println(versionFiles.get(remoteFile).getChecksum());
+                            missingFiles.add(remoteFile);
+                        } else {
+                            integrityDump.append("\t\tFile unchanged (copied from old)")
+                                    .append(System.lineSeparator());
+                            unchangedFiles.add(file);
+                        }
+                    } else {
+                        integrityDump.append("\t\tFailed filesize (old) ")
+                                .append(" local: ")
+                                .append(DataEncoder.getByteSize(file))
+                                .append(" remote: ")
+                                .append(versionFiles.get(remoteFile).getSize())
+                                .append(System.lineSeparator());
+                        System.out.print("Failed filesize (old) ");
+                        System.out.print(DataEncoder.getByteSize(file));
+                        System.out.print(" ");
+                        System.out.println(versionFiles.get(remoteFile).getSize());
+                        missingFiles.add(remoteFile);
+                    }
+                } catch (NoSuchAlgorithmException | IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                integrityDump.append("\tRemote not found in old project (added)")
+                        .append(System.lineSeparator());
+                missingFiles.add(remoteFile);
+            }
+        }
+    }
+    public static void checkRemoteIntegrity(Path file, Path remoteFile, Map<Path, Path> patchedFiles,
+            List<Path> unchangedFiles, List<Path> missingFiles, Map<Path, VersionFileEntity> versionFiles) {
+        checkRemoteIntegrity(file, remoteFile, patchedFiles, unchangedFiles, missingFiles, versionFiles, new StringBuffer());
+    }
+    public static void checkLocalIntegrity(Path file, Path relativeFile,
+            List<Path> failedFiles, List<Path> deletedFiles, Map<Path, VersionFileEntity> versionFiles) {
+        checkLocalIntegrity(file, relativeFile, failedFiles, deletedFiles, versionFiles, new StringBuffer());
+    }
+
+    public static Map<String, List<Path>> checkProjectIntegrity(
             Map<Path, Path> patchedFiles, Path oldProjectPath, Map<Path, VersionFileEntity> versionFiles) throws IOException {
-        ArrayList<Path> failedFiles = new ArrayList<>();
-        ArrayList<Path> missingFiles = new ArrayList<>();
-        ArrayList<Path> deletedFiles = new ArrayList<>();
-        ArrayList<Path> unchangedFiles = new ArrayList<>();
+        List<Path> failedFiles = new ArrayList<>();
+        List<Path> missingFiles = new ArrayList<>();
+        List<Path> deletedFiles = new ArrayList<>();
+        List<Path> unchangedFiles = new ArrayList<>();
 
         StringBuffer integrityDump = new StringBuffer();
 
         patchedFiles.forEach((relativeFile, file) -> {
-            System.err.print("checking ");
-            System.err.println(file);
-            try {
-                if (!versionFiles.containsKey(relativeFile)) {
-                    integrityDump.append("Not found in remote (deleted) ").append(file).append(System.lineSeparator());
-                    deletedFiles.add(file);
-                } else {
-                    if (DataEncoder.getByteSize(file) == versionFiles.get(relativeFile).getSize()) {
-                        if (!compareChecksum(file, versionFiles.get(relativeFile).getChecksum())) {
-                            integrityDump.append("Failed checksum (patched) ")
-                                    .append(file)
-                                    .append(" local: ")
-                                    .append(DataEncoder.getChecksum(file))
-                                    .append(" remote: ")
-                                    .append(versionFiles.get(relativeFile).getChecksum())
-                                    .append(System.lineSeparator());
-                            System.out.print("Failed checksum (patched) ");
-                            System.out.print(DataEncoder.getChecksum(file));
-                            System.out.print(" ");
-                            System.out.println(versionFiles.get(relativeFile).getChecksum());
-                            failedFiles.add(file);
-                        }
-                    } else {
-                        integrityDump.append("Failed filesize (patched) ")
-                                .append(file)
-                                .append(" local: ")
-                                .append(DataEncoder.getByteSize(file))
-                                .append(" remote: ")
-                                .append(versionFiles.get(relativeFile).getSize())
-                                .append(System.lineSeparator());
-                        System.out.print("Failed filesize (patched) ");
-                        System.out.print(DataEncoder.getByteSize(file));
-                        System.out.print(" ");
-                        System.out.println(versionFiles.get(relativeFile).getSize());
-                        failedFiles.add(file);
-                    }
-                }
-            } catch (IOException | NoSuchAlgorithmException | JSONException e) {
-                e.printStackTrace();
-            }
+            checkLocalIntegrity(file, relativeFile, failedFiles, deletedFiles, versionFiles, integrityDump);
         });
 
         versionFiles.keySet().forEach(remoteFile -> {
             Path file = oldProjectPath.resolve(remoteFile.toString());
-            System.err.print("checking remote ");
-            System.err.println(remoteFile);
-            if (!patchedFiles.containsKey(remoteFile)) {
-                integrityDump.append("Remote not found in local ")
-                        .append(file)
-                        .append(System.lineSeparator());
-                if (Files.exists(file)) {
-                    integrityDump.append("\tRemote found in old project")
-                            .append(System.lineSeparator());
-                    try {
-                        if (DataEncoder.getByteSize(file) == versionFiles.get(remoteFile).getSize()) {
-                            if (!compareChecksum(file, versionFiles.get(remoteFile).getChecksum())) {
-                                integrityDump.append("\t\tFailed checksum (old) ")
-                                        .append(" local: ")
-                                        .append(DataEncoder.getChecksum(file))
-                                        .append(" remote: ")
-                                        .append(versionFiles.get(remoteFile).getChecksum())
-                                        .append(System.lineSeparator());
-                                System.out.print("Failed checksum (old) ");
-                                System.out.print(DataEncoder.getChecksum(file));
-                                System.out.print(" ");
-                                System.out.println(versionFiles.get(remoteFile).getChecksum());
-                                missingFiles.add(remoteFile);
-                            } else {
-                                integrityDump.append("\t\tFile unchanged (copied from old)")
-                                        .append(System.lineSeparator());
-                                unchangedFiles.add(file);
-                            }
-                        } else {
-                            integrityDump.append("\t\tFailed filesize (old) ")
-                                    .append(" local: ")
-                                    .append(DataEncoder.getByteSize(file))
-                                    .append(" remote: ")
-                                    .append(versionFiles.get(remoteFile).getSize())
-                                    .append(System.lineSeparator());
-                            System.out.print("Failed filesize (old) ");
-                            System.out.print(DataEncoder.getByteSize(file));
-                            System.out.print(" ");
-                            System.out.println(versionFiles.get(remoteFile).getSize());
-                            missingFiles.add(remoteFile);
-                        }
-                    } catch (NoSuchAlgorithmException | IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    integrityDump.append("\tRemote not found in old project (added)")
-                            .append(System.lineSeparator());
-                    missingFiles.add(remoteFile);
-                }
-            }
+            checkRemoteIntegrity(file, remoteFile, patchedFiles, unchangedFiles, missingFiles, versionFiles, integrityDump);
         });
 
         integrityDump.append("Total checked files: ")
@@ -142,7 +157,7 @@ public class IntegrityChecker {
         writer.write(integrityDump.toString());
         writer.close();
 
-        Map<String, ArrayList<Path>> result = new HashMap<>(
+        Map<String, List<Path>> result = new HashMap<>(
             Map.of("failed", failedFiles,
                     "missing", missingFiles,
                     "deleted", deletedFiles,
@@ -150,14 +165,14 @@ public class IntegrityChecker {
 
         return result;
     }
-    public static Map<String, ArrayList<Path>> checkRemoteIntegrity(Path localFile, Path oldProjectPath, Path newProjectPath, String version) throws IOException {
+    public static Map<String, List<Path>> checkProjectIntegrity(Path localFile, Path oldProjectPath, Path newProjectPath, String version) throws IOException {
         Path relativeFile = newProjectPath.relativize(localFile);
-        return checkRemoteIntegrity(new HashMap<Path, Path>(Map.of(relativeFile, localFile)), oldProjectPath,
+        return checkProjectIntegrity(new HashMap<Path, Path>(Map.of(relativeFile, localFile)), oldProjectPath,
                 new HashMap<Path, VersionFileEntity>(Map.of(relativeFile,
                         new VersionFileEntity(FilesEndpoint.getVersion(Map.of("location", relativeFile.toString(), "v", version)), relativeFile))));
     }
-    public static Map<String, ArrayList<Path>> checkRemoteIntegrity(Map<Path, Path> patchedFiles, Path oldProjectPath, String version) throws IOException {
-        return checkRemoteIntegrity(patchedFiles, oldProjectPath,
+    public static Map<String, List<Path>> checkProjectIntegrity(Map<Path, Path> patchedFiles, Path oldProjectPath, String version) throws IOException {
+        return checkProjectIntegrity(patchedFiles, oldProjectPath,
                 new VersionEntity(VersionsEndpoint.getVersions(Map.of("v", version)).getJSONObject("version")).getFiles());
     }
 
