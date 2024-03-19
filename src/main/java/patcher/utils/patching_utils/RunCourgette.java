@@ -38,9 +38,9 @@ public class RunCourgette {
         return courgettePath;
     }
 
-    public Process runExec(String[] args, Path projectParentPath, boolean redirectOutput) throws IOException, InterruptedException {
+    public Process runExec(String[] args, Path courgetteWorkingDirectory, boolean redirectOutput) throws IOException, InterruptedException {
         Process courgette = null;
-        courgette = RunExecutable.runExec(courgettePath.toString(), args, projectParentPath, redirectOutput);
+        courgette = RunExecutable.runExec(courgettePath.toString(), args, courgetteWorkingDirectory, redirectOutput);
 
         if (allowConsoleOutput) {
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(courgette.getInputStream()));
@@ -66,9 +66,9 @@ public class RunCourgette {
         return courgette;
     }
     
-    public void run(String[] args, Path projectParentPath, boolean _replaceFiles, boolean redirectOutput) throws IOException, InterruptedException {
+    public void run(String[] args, Path courgetteWorkingDirectory, boolean _replaceFiles, boolean redirectOutput) throws IOException, InterruptedException {
         courgetteArgs = args;
         replaceFiles = _replaceFiles;
-        runExec(courgetteArgs, projectParentPath, redirectOutput);
+        runExec(courgetteArgs, courgetteWorkingDirectory, redirectOutput);
     }
 }
