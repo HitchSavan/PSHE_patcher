@@ -83,7 +83,7 @@ public class PatcherMain {
             e.printStackTrace();
         }
 
-        IntegrityChecker.checkRemoteIntegrity(patchedFiles, projectPath, rootVersion.getVersionString());
+        IntegrityChecker.checkProjectIntegrity(patchedFiles, projectPath, rootVersion.getVersionString());
 
         // fileVisitor.walkFileTree().forEach(filePath -> {
         //     if (counter.getAndIncrement() % 50 == 0)
