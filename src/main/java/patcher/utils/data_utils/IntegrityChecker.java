@@ -12,12 +12,22 @@ import java.util.Map;
 
 import org.json.JSONException;
 
+import lombok.Setter;
 import patcher.remote_api.endpoints.FilesEndpoint;
 import patcher.remote_api.endpoints.VersionsEndpoint;
 import patcher.remote_api.entities.VersionEntity;
 import patcher.remote_api.entities.VersionFileEntity;
 
 public class IntegrityChecker {
+
+    private static Map<Path, String> patchedFilesChecksums = new HashMap<>();
+    @Setter
+    private static boolean overwriteChecksums = false;
+
+    public static void init() {
+        patchedFilesChecksums.clear();
+        overwriteChecksums = false;
+    }
     private static void checkLocalIntegrity(Path file, Path relativeFile,
             List<Path> failedFiles, List<Path> deletedFiles, Map<Path, VersionFileEntity> versionFiles, StringBuffer integrityDump) {
         try {
@@ -25,17 +35,21 @@ public class IntegrityChecker {
                 integrityDump.append("Not found in remote (deleted) ").append(file).append(System.lineSeparator());
                 deletedFiles.add(file);
             } else {
-                if (DataEncoder.getByteSize(file) == versionFiles.get(relativeFile).getSize()) {
-                    if (!compareChecksum(file, versionFiles.get(relativeFile).getChecksum())) {
+                long byteSize = DataEncoder.getByteSize(file);
+                if (byteSize == versionFiles.get(relativeFile).getSize()) {
+                    if (!patchedFilesChecksums.containsKey(file)) {
+                        patchedFilesChecksums.put(file, DataEncoder.getChecksum(file));
+                    }
+                    if (!compareChecksum(patchedFilesChecksums.get(file), versionFiles.get(relativeFile).getChecksum())) {
                         integrityDump.append("Failed checksum (patched) ")
                                 .append(file)
                                 .append(" local: ")
-                                .append(DataEncoder.getChecksum(file))
+                                .append(patchedFilesChecksums.get(file))
                                 .append(" remote: ")
                                 .append(versionFiles.get(relativeFile).getChecksum())
                                 .append(System.lineSeparator());
                         System.out.print("Failed checksum (patched) ");
-                        System.out.print(DataEncoder.getChecksum(file));
+                        System.out.print(patchedFilesChecksums.get(file));
                         System.out.print(" ");
                         System.out.println(versionFiles.get(relativeFile).getChecksum());
                         failedFiles.add(file);
@@ -44,12 +58,12 @@ public class IntegrityChecker {
                     integrityDump.append("Failed filesize (patched) ")
                             .append(file)
                             .append(" local: ")
-                            .append(DataEncoder.getByteSize(file))
+                            .append(byteSize)
                             .append(" remote: ")
                             .append(versionFiles.get(relativeFile).getSize())
                             .append(System.lineSeparator());
                     System.out.print("Failed filesize (patched) ");
-                    System.out.print(DataEncoder.getByteSize(file));
+                    System.out.print(byteSize);
                     System.out.print(" ");
                     System.out.println(versionFiles.get(relativeFile).getSize());
                     failedFiles.add(file);
@@ -70,16 +84,20 @@ public class IntegrityChecker {
                 integrityDump.append("\tRemote found in old project")
                         .append(System.lineSeparator());
                 try {
-                    if (DataEncoder.getByteSize(file) == versionFiles.get(remoteFile).getSize()) {
-                        if (!compareChecksum(file, versionFiles.get(remoteFile).getChecksum())) {
+                    long byteSize = DataEncoder.getByteSize(file);
+                    if (byteSize == versionFiles.get(remoteFile).getSize()) {
+                        if (!patchedFilesChecksums.containsKey(file)) {
+                            patchedFilesChecksums.put(file, DataEncoder.getChecksum(file));
+                        }
+                        if (!compareChecksum(patchedFilesChecksums.get(file), versionFiles.get(remoteFile).getChecksum())) {
                             integrityDump.append("\t\tFailed checksum (old) ")
                                     .append(" local: ")
-                                    .append(DataEncoder.getChecksum(file))
+                                    .append(patchedFilesChecksums.get(file))
                                     .append(" remote: ")
                                     .append(versionFiles.get(remoteFile).getChecksum())
                                     .append(System.lineSeparator());
                             System.out.print("Failed checksum (old) ");
-                            System.out.print(DataEncoder.getChecksum(file));
+                            System.out.print(patchedFilesChecksums.get(file));
                             System.out.print(" ");
                             System.out.println(versionFiles.get(remoteFile).getChecksum());
                             missingFiles.add(remoteFile);
@@ -91,12 +109,12 @@ public class IntegrityChecker {
                     } else {
                         integrityDump.append("\t\tFailed filesize (old) ")
                                 .append(" local: ")
-                                .append(DataEncoder.getByteSize(file))
+                                .append(byteSize)
                                 .append(" remote: ")
                                 .append(versionFiles.get(remoteFile).getSize())
                                 .append(System.lineSeparator());
                         System.out.print("Failed filesize (old) ");
-                        System.out.print(DataEncoder.getByteSize(file));
+                        System.out.print(byteSize);
                         System.out.print(" ");
                         System.out.println(versionFiles.get(remoteFile).getSize());
                         missingFiles.add(remoteFile);
