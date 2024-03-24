@@ -11,6 +11,8 @@ public class Patcher {
     public static void generatePatch(Path oldAbsoluteFile, Path newAbsoluteFile, Path patchAbsoluteFile,
             Path courgetteWorkingDirectory, boolean redirectOutput) throws IOException, InterruptedException {
 
+        Files.createDirectories(newAbsoluteFile.getParent());
+
         Path oldMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_old", oldAbsoluteFile.getFileName().toString()));
         Path newMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_new", newAbsoluteFile.getFileName().toString()));
         Path patchMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_patch", patchAbsoluteFile.getFileName().toString()));
@@ -32,6 +34,8 @@ public class Patcher {
 
     public static void applyPatch(Path oldAbsoluteFile, Path newAbsoluteFile, Path patchAbsoluteFile,
             Path courgetteWorkingDirectory, boolean replaceFiles, boolean redirectOutput) throws IOException, InterruptedException {
+
+        Files.createDirectories(newAbsoluteFile.getParent());
 
         Path oldMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_files", "old", oldAbsoluteFile.getFileName().toString()));
         Path newMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_files", "new", newAbsoluteFile.getFileName().toString()));
