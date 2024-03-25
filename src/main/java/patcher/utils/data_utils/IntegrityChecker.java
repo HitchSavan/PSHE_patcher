@@ -228,9 +228,10 @@ public class IntegrityChecker {
         return compareChecksum(DataEncoder.getChecksum(filecontent), DataEncoder.getChecksum(checksum));
     }
 
-    public static Failures checkFileIntegrity(Path localFile, long byteSize, String checksum) throws NoSuchAlgorithmException, IOException {
-        if (DataEncoder.getByteSize(localFile) == byteSize) {
-            if (!IntegrityChecker.compareChecksum(localFile, checksum)) {
+    public static Failures checkFileIntegrity(Path localFile, long localBytesize, String localChecksum,
+    long byteSize, String checksum) throws NoSuchAlgorithmException, IOException {
+        if (localBytesize == byteSize) {
+            if (!IntegrityChecker.compareChecksum(localChecksum, checksum)) {
                 System.out.print("FAILED CHECKSUM FOR ");
                 System.out.println(localFile);
                 return Failures.CHECKSUM;
@@ -241,5 +242,12 @@ public class IntegrityChecker {
             return Failures.BYTESIZE;
         }
         return Failures.NONE;
+    }
+    public static Failures checkFileIntegrity(Path localFile, long byteSize, String checksum) throws NoSuchAlgorithmException, IOException {
+        return checkFileIntegrity(localFile, DataEncoder.getChecksum(localFile), byteSize, checksum);
+    }
+    public static Failures checkFileIntegrity(Path localFile, String localChecksum,
+            long byteSize, String checksum) throws NoSuchAlgorithmException, IOException {
+        return checkFileIntegrity(localFile, DataEncoder.getByteSize(localFile), DataEncoder.getChecksum(localFile), byteSize, checksum);
     }
 }
