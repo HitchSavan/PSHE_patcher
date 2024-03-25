@@ -10,9 +10,7 @@ import java.util.List;
 public class Patcher {
     public static void generatePatch(Path oldAbsoluteFile, Path newAbsoluteFile, Path patchAbsoluteFile,
             Path courgetteWorkingDirectory, boolean redirectOutput) throws IOException, InterruptedException {
-
-        Files.createDirectories(newAbsoluteFile.getParent());
-
+        initFiles(oldAbsoluteFile, newAbsoluteFile);
         Path oldMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_old", oldAbsoluteFile.getFileName().toString()));
         Path newMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_new", newAbsoluteFile.getFileName().toString()));
         Path patchMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_patch", patchAbsoluteFile.getFileName().toString()));
@@ -34,8 +32,7 @@ public class Patcher {
 
     public static void applyPatch(Path oldAbsoluteFile, Path newAbsoluteFile, Path patchAbsoluteFile,
             Path courgetteWorkingDirectory, boolean replaceFiles, boolean redirectOutput) throws IOException, InterruptedException {
-
-        Files.createDirectories(newAbsoluteFile.getParent());
+        initFiles(oldAbsoluteFile, newAbsoluteFile);
 
         Path oldMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_files", "old", oldAbsoluteFile.getFileName().toString()));
         Path newMovedFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_files", "new", newAbsoluteFile.getFileName().toString()));
@@ -70,5 +67,15 @@ public class Patcher {
             System.out.println();
         }
         courgetteInstance.run(args, courgetteWorkingDirectory, replaceFiles, redirectOutput);
+    }
+
+    private static void initFiles(Path oldAbsoluteFile, Path newAbsoluteFile) throws IOException {
+        Files.createDirectories(newAbsoluteFile.getParent());
+        if (!Files.exists(oldAbsoluteFile)) {
+            Files.createDirectories(oldAbsoluteFile.getParent());
+            Files.createFile(oldAbsoluteFile);
+            byte[] emptyData = {0};
+            Files.write(oldAbsoluteFile, emptyData);
+        }
     }
 }
