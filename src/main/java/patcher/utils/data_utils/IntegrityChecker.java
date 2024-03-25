@@ -20,6 +20,12 @@ import patcher.remote_api.entities.VersionFileEntity;
 
 public class IntegrityChecker {
 
+    public enum Failures {
+        NONE,
+        BYTESIZE,
+        CHECKSUM
+    }
+
     private static Map<Path, String> patchedFilesChecksums = new HashMap<>();
     @Setter
     private static boolean overwriteChecksums = false;
@@ -220,5 +226,20 @@ public class IntegrityChecker {
     }
     public static boolean compareChecksum(byte[] filecontent, byte[] checksum) throws NoSuchAlgorithmException, IOException {
         return compareChecksum(DataEncoder.getChecksum(filecontent), DataEncoder.getChecksum(checksum));
+    }
+
+    public static Failures checkFileIntegrity(Path localFile, long byteSize, String checksum) throws NoSuchAlgorithmException, IOException {
+        if (DataEncoder.getByteSize(localFile) == byteSize) {
+            if (!IntegrityChecker.compareChecksum(localFile, checksum)) {
+                System.out.print("FAILED CHECKSUM FOR ");
+                System.out.println(localFile);
+                return Failures.CHECKSUM;
+            }
+        } else {
+            System.out.print("FAILED BYTESIZE FOR ");
+            System.out.println(localFile);
+            return Failures.BYTESIZE;
+        }
+        return Failures.NONE;
     }
 }
