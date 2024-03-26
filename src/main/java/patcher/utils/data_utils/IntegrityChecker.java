@@ -39,7 +39,7 @@ public class IntegrityChecker {
         try {
             if (!versionFiles.containsKey(relativeFile)) {
                 integrityDump.append("Not found in remote (deleted) ").append(file).append(System.lineSeparator());
-                deletedFiles.add(file);
+                deletedFiles.add(relativeFile);
             } else {
                 long byteSize = DataEncoder.getByteSize(file);
                 if (byteSize == versionFiles.get(relativeFile).getSize()) {
@@ -58,7 +58,7 @@ public class IntegrityChecker {
                         System.out.print(patchedFilesChecksums.get(file));
                         System.out.print(" ");
                         System.out.println(versionFiles.get(relativeFile).getChecksum());
-                        failedFiles.add(file);
+                        failedFiles.add(relativeFile);
                     }
                 } else {
                     integrityDump.append("Failed filesize (patched) ")
@@ -72,7 +72,7 @@ public class IntegrityChecker {
                     System.out.print(byteSize);
                     System.out.print(" ");
                     System.out.println(versionFiles.get(relativeFile).getSize());
-                    failedFiles.add(file);
+                    failedFiles.add(relativeFile);
                 }
             }
         } catch (IOException | NoSuchAlgorithmException | JSONException e) {
@@ -110,7 +110,7 @@ public class IntegrityChecker {
                         } else {
                             integrityDump.append("\t\tFile unchanged (copied from old)")
                                     .append(System.lineSeparator());
-                            unchangedFiles.add(file);
+                            unchangedFiles.add(remoteFile);
                         }
                     } else {
                         integrityDump.append("\t\tFailed filesize (old) ")
