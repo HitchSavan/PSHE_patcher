@@ -74,7 +74,11 @@ public class Patcher {
         patchRelativeFile = courgetteWorkingDirectory.resolve(Paths.get("courgette_files", "patch", patchAbsoluteFile.getFileName().toString()));
 
         List.of(oldRelativeFile, newRelativeFile, patchRelativeFile).forEach(file -> {
-            file.getParent().toFile().mkdirs();
+            try {
+                Files.createDirectories(file.getParent());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
 
         Files.copy(oldAbsoluteFile, oldRelativeFile, StandardCopyOption.REPLACE_EXISTING);
@@ -88,12 +92,8 @@ public class Patcher {
         execute(args, courgetteWorkingDirectory, replaceFiles, redirectOutput);
 
         Files.move(newRelativeFile, newAbsoluteFile, StandardCopyOption.REPLACE_EXISTING);
-        if (workInplace) {
-            Directories.deleteDirectory(courgetteWorkingDirectory.resolve("courgette_files"));
-        } else {
-            Files.delete(oldRelativeFile);
-            Files.delete(patchRelativeFile);
-        }
+        Files.delete(oldRelativeFile);
+        Files.delete(patchRelativeFile);
     }
 
     private static void execute(String[] args, Path courgetteWorkingDirectory, boolean replaceFiles, boolean redirectOutput) throws IOException, InterruptedException {
